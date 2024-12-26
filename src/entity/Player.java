@@ -7,6 +7,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Objects;
 
 public class Player extends Entity{
 
@@ -15,6 +16,7 @@ public class Player extends Entity{
 
     public final int screenX;
     public final int screenY;
+    public int hasKey = 0;
 
     public Player(GamePanel gp, KeyHandler keyH){
 
@@ -24,7 +26,9 @@ public class Player extends Entity{
         screenX = gp.screenWidth/2 - (gp.tileSize/2);
         screenY = gp.screenHeight/2 - (gp.tileSize/2);
 
-        solidArea = new Rectangle(8,16,32,32);
+        solidArea = new Rectangle(8,16,28,28);
+        solidAreaDefaultX = 8;
+        solidAreaDefaultY = 16;
 
         setDefaultValues();
         getPlayerImage();
@@ -42,14 +46,14 @@ public class Player extends Entity{
     public void getPlayerImage(){
 
         try{
-            up1 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("player/boy_up_1.png"));
-            up2 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("player/boy_up_2.png"));
-            down1 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("player/boy_down_1.png"));
-            down2 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("player/boy_down_2.png"));
-            left1 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("player/boy_left_1.png"));
-            left2 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("player/boy_left_2.png"));
-            right1 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("player/boy_right_1.png"));
-            right2 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("player/boy_right_2.png"));
+            up1 = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("player/boy_up_1.png")));
+            up2 = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("player/boy_up_2.png")));
+            down1 = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("player/boy_down_1.png")));
+            down2 = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("player/boy_down_2.png")));
+            left1 = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("player/boy_left_1.png")));
+            left2 = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("player/boy_left_2.png")));
+            right1 = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("player/boy_right_1.png")));
+            right2 = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("player/boy_right_2.png")));
         }catch(IOException e){
             e.printStackTrace();
         }
@@ -57,35 +61,6 @@ public class Player extends Entity{
     }
 
     public void update(){
-
-//        if (keyH.upPressed && keyH.rightPressed && keyH.leftPressed && keyH.downPressed){
-//        }
-//        else if (keyH.upPressed && keyH.rightPressed && keyH.leftPressed) {
-//            y -= speed;
-//        }
-//        else if (keyH.downPressed && keyH.rightPressed && keyH.leftPressed){
-//            y += speed;
-//        }
-//        else if (keyH.upPressed && keyH.leftPressed){
-//            y -= speed;
-//            x -= speed;
-//        }
-//        else if (keyH.upPressed && keyH.rightPressed) {
-//            y -= speed;
-//            x += speed;
-//        }
-//        else if (keyH.upPressed && keyH.downPressed){
-//        }
-//        else if (keyH.downPressed && keyH.leftPressed){
-//            y += speed;
-//            x -= speed;
-//        }
-//        else if (keyH.downPressed && keyH.rightPressed){
-//            y += speed;
-//            x += speed;
-//        }
-//        else if (keyH.leftPressed && keyH.rightPressed){
-//        }
 
         if (keyH.downPressed || keyH.leftPressed || keyH.upPressed || keyH.rightPressed) {
             if (keyH.upPressed){
@@ -104,6 +79,10 @@ public class Player extends Entity{
             // CHECK TILE COLLISION
             collisionOn = false;
             gp.checker.checkTile(this);
+
+            //Check object collision
+            int objIndex = gp.checker.checkObject(this,true);
+            pickupObject(objIndex);
 
             // IF COLLISION IS FALSE, PLAYER CAN MOVE
             if (!collisionOn){
@@ -135,10 +114,36 @@ public class Player extends Entity{
         }
     }
 
+    public void pickupObject(int i){
+
+        if (i != 999){
+
+            String objName = gp.obj[i].name;
+
+            switch (objName){
+
+                case "Key":
+                    gp.playSE(1);
+                    hasKey++;
+                    gp.obj[i] = null;
+                    break;
+                case "Door":
+                    if (hasKey > 0){
+                        gp.playSE(3);
+                        gp.obj[i] = null;
+                        hasKey--;
+                    }
+                    break;
+                case "Boots":
+                    gp.playSE(2);
+                    speed+=2;
+                    gp.obj[i] = null;
+                    break;
+            }
+        }
+    }
+
     public void draw(Graphics2D g2){
-//        g2.setColor(Color.white);
-//
-//        g2.fillRect(x,y,gp.tileSize,gp.tileSize);
 
         BufferedImage image = null;
 
