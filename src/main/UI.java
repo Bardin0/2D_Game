@@ -1,6 +1,8 @@
 package main;
 
+import object.OBJ_Heart;
 import object.OBJ_Key;
+import object.SuperObject;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -19,6 +21,10 @@ public class UI {
     public String message = "";
     int messageCounter = 0;
     public String currentDialouge = "";
+    public int commandNumber = 0;
+
+    BufferedImage heartFull, heartHalf, heartBlank;
+
 
     public UI(GamePanel gp){
         this.gp = gp;
@@ -31,6 +37,12 @@ public class UI {
         } catch (FontFormatException | IOException e) {
             throw new RuntimeException(e);
         }
+
+        // Create HUD Objects
+        SuperObject heart = new OBJ_Heart(gp);
+        heartFull = heart.image;
+        heartHalf = heart.image2;
+        heartBlank = heart.image3;
     }
 
     public void showMessage(String text){
@@ -45,15 +57,78 @@ public class UI {
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2.setColor(Color.white);
 
-        if (gp.gameState == gp.playState){
-            //TO-DO
+        if (gp.gameState == gp.titleState){
+            drawTitleScreen();
+        }
+        else if (gp.gameState == gp.playState){
+            drawPlayerLife();
         }
         else if (gp.gameState == gp.pauseState){
+            drawPlayerLife();
             drawPauseScreen();
         }
         else if (gp.gameState == gp.dialogueState){
+            drawPlayerLife();
             drawDialogueScreen();
         }
+    }
+
+    public void drawTitleScreen(){
+
+        g2.setColor(new Color(199, 137, 137));
+        g2.fillRect(0,0,gp.screenWidth,gp.screenHeight);
+
+        // Name
+        g2.setFont(g2.getFont().deriveFont(Font.PLAIN,96));
+        String text = "Unc's Journey";
+        int x = getXForCenterText(text);
+        int y = gp.tileSize*3;
+
+        // Shadow
+        g2.setColor(Color.black);
+        g2.drawString(text,x+5,y+5);
+
+        // Main color
+        g2.setColor(Color.white);
+        g2.drawString(text,x,y);
+
+        // Image
+
+        x = gp.screenWidth/2 - gp.tileSize;
+        y += gp.tileSize*2;
+
+        g2.drawImage(gp.player.down1, x, y, gp.tileSize*2, gp.tileSize*2, null);
+
+        // Menu
+        g2.setFont(g2.getFont().deriveFont(Font.PLAIN,40F));
+        text = "New Game";
+        x = getXForCenterText(text);
+        y += gp.tileSize*3;
+        g2.drawString(text,x,y);
+
+        if (commandNumber == 0){
+            g2.drawString(">", x - gp.tileSize,y-4);
+        }
+
+        text = "Load Game";
+        x = getXForCenterText(text);
+        y += gp.tileSize;
+        g2.drawString(text,x,y);
+
+        if (commandNumber == 1){
+            g2.drawString(">", x - gp.tileSize,y-4);
+        }
+
+        text = "Quit";
+        x = getXForCenterText(text);
+        y += gp.tileSize;
+        g2.drawString(text,x,y);
+
+        if (commandNumber == 2){
+            g2.drawString(">", x - gp.tileSize,y-4);
+        }
+
+
     }
 
     public void drawPauseScreen(){
@@ -108,5 +183,31 @@ public class UI {
         return gp.screenWidth/2 - length/2;
     }
 
+    public void drawPlayerLife(){
 
+        int x = gp.tileSize/2;
+        int y = gp.tileSize/2;
+        int i = 0;
+
+        // Draw max life
+        while (i < gp.player.maxLife/2){
+            g2.drawImage(heartBlank,x,y,null);
+            i++;
+            x += gp.tileSize;
+        }
+
+        i = 0;
+        x = gp.tileSize/2;
+
+        // Draw current life
+        while (i < gp.player.life){
+            g2.drawImage(heartHalf,x,y,null);
+            i++;
+            if (i < gp.player.life){
+                g2.drawImage(heartFull,x,y,null);
+                i++;
+            }
+            x += gp.tileSize;
+        }
+    }
 }
