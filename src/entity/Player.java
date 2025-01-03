@@ -12,16 +12,14 @@ import java.util.Objects;
 
 public class Player extends Entity{
 
-    GamePanel gp;
     KeyHandler keyH;
 
     public final int screenX;
     public final int screenY;
-    public int hasKey = 0;
 
     public Player(GamePanel gp, KeyHandler keyH){
 
-        this.gp = gp;
+        super(gp);
         this.keyH = keyH;
 
         screenX = gp.screenWidth/2 - (gp.tileSize/2);
@@ -46,30 +44,15 @@ public class Player extends Entity{
 
     public void getPlayerImage(){
 
-        up1 = setup("boy_up_1");
-        up2 = setup("boy_up_2");
-        down1 = setup("boy_down_1");
-        down2 = setup("boy_down_2");
-        left1 = setup("boy_left_1");
-        left2 = setup("boy_left_2");
-        right1 = setup("boy_right_1");
-        right2 = setup("boy_right_2");
+        up1 = setup("player/boy_up_1");
+        up2 = setup("player/boy_up_2");
+        down1 = setup("player/boy_down_1");
+        down2 = setup("player/boy_down_2");
+        left1 = setup("player/boy_left_1");
+        left2 = setup("player/boy_left_2");
+        right1 = setup("player/boy_right_1");
+        right2 = setup("player/boy_right_2");
 
-
-    }
-
-    public BufferedImage setup(String imageName){
-        UtilityTool uTool = new UtilityTool();
-        BufferedImage image;
-
-        try{
-            image = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("player/" + imageName + ".png")));
-            image = uTool.scaleImage(image, gp.tileSize, gp.tileSize);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        return image;
     }
 
     public void update(){
@@ -96,7 +79,11 @@ public class Player extends Entity{
             int objIndex = gp.checker.checkObject(this,true);
             pickupObject(objIndex);
 
-            // IF COLLISION IS FALSE, PLAYER CAN MOVE
+            // Check npc collision
+            int npcIndex = gp.checker.checkEntity(this,gp.npc);
+            interactNPC(npcIndex);
+
+            // If collision is false, player can move
             if (!collisionOn){
                 switch (direction){
                     case "up":
@@ -130,38 +117,6 @@ public class Player extends Entity{
 
         if (i != 999){
 
-            String objName = gp.obj[i].name;
-
-            switch (objName){
-
-                case "Key":
-                    gp.playSE(1);
-                    hasKey++;
-                    gp.obj[i] = null;
-                    gp.ui.showMessage("You got a key!");
-                    break;
-                case "Door":
-                    if (hasKey > 0){
-                        gp.playSE(3);
-                        gp.obj[i] = null;
-                        hasKey--;
-                        gp.ui.showMessage("You opened the door!");
-                    }else{
-                        gp.ui.showMessage("You don't have a key!");
-                    }
-                    break;
-                case "Boots":
-                    gp.playSE(2);
-                    speed+=2;
-                    gp.obj[i] = null;
-                    gp.ui.showMessage("Speed up!");
-                    break;
-                case "Chest":
-                    gp.ui.gameFinished = true;
-                    gp.stopMusic();
-                    gp.playSE(4);
-                    break;
-            }
         }
     }
 
@@ -201,5 +156,17 @@ public class Player extends Entity{
         }
 
         g2.drawImage(image,screenX,screenY,null);
+    }
+
+    public void interactNPC(int i){
+
+        if (i != 999){
+            if (gp.keyHandler.enterPressed){
+                gp.gameState = gp.dialogueState;
+                gp.npc[i].speak();
+            }
+        }
+        gp.keyHandler.enterPressed = false;
+
     }
 }
