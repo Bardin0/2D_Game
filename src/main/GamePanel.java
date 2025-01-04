@@ -2,30 +2,34 @@ package main;
 
 import entity.Entity;
 import entity.Player;
-import object.SuperObject;
 import tile.TileManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class GamePanel extends JPanel implements Runnable{
 
     // SCREEN SETTINGS
     final int originalTileSize = 16; // 16x16 tile
     final int scale = 3;
-
     public final int tileSize = originalTileSize * scale; // 48x48 tile
     public final int maxScreenCol = 16;
     public final int maxScreenRow = 12;
     public final int screenWidth = tileSize * maxScreenCol; // 768 pixels
     public final int screenHeight = tileSize * maxScreenRow; // 576 pixels
 
+
     // FPS
     int FPS = 60;
+
 
     // WORLD PARAMETERS
     public final int maxWorldCol = 50;
     public final int maxWorldRow = 50;
+
 
     //System
     TileManager tileM = new TileManager(this);
@@ -38,10 +42,13 @@ public class GamePanel extends JPanel implements Runnable{
     public EventHandler eventH = new EventHandler(this);
     Thread gameThread;
 
+
     //Entity and Object
     public Player player = new Player(this, keyHandler);
-    public SuperObject[] obj = new SuperObject[10];
+    public Entity[] obj = new Entity[10];
     public Entity[] npc = new Entity[10];
+    ArrayList<Entity> entityList = new ArrayList<>();
+
 
     //Game State
     public int gameState;
@@ -49,6 +56,7 @@ public class GamePanel extends JPanel implements Runnable{
     public final int playState = 1;
     public final int pauseState = 2;
     public final int dialogueState = 3;
+
 
     public GamePanel(){
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -58,6 +66,9 @@ public class GamePanel extends JPanel implements Runnable{
         this.setFocusable(true);
     }
 
+    /**
+     * Setup of the game, places all objects and Npc's on the map
+     */
     public void setupGame(){
 
         aSetter.setObject();
@@ -66,12 +77,17 @@ public class GamePanel extends JPanel implements Runnable{
 
     }
 
+    /**
+     * Makes a new game thread
+     */
     public void startGameThread(){
         gameThread = new Thread(this);
         gameThread.start();
     }
 
-
+    /**
+     * Function to run the game
+     */
     public void run(){
 
         double drawInterval = (double)1000000000/FPS;
@@ -91,7 +107,7 @@ public class GamePanel extends JPanel implements Runnable{
 
             if (delta >= 1){
                 update();
-                repaint();
+                repaint();  // calls the paint component method, unsure why this is used
                 delta--;
                 drawCount++;
             }
@@ -125,6 +141,7 @@ public class GamePanel extends JPanel implements Runnable{
 
     /**
      * This is a built-in java method to draw things to a JPanel
+     * This method is responsible for drawing everything we see to the screen
      * @param g the Graphics object to protect
      */
     public void paintComponent(Graphics g){
@@ -147,26 +164,43 @@ public class GamePanel extends JPanel implements Runnable{
             //Tile
             tileM.draw(g2);
 
-            //Object
-            for (SuperObject superObject : obj) {
-                if (superObject != null) {
-                    superObject.draw(g2, this);
+            // Add all entities to list
+            entityList.add(player);
+
+            // Adds Npc's
+            for (Entity entity : npc){
+                if (entity != null){
+                    entityList.add(entity);
                 }
             }
 
-            // NPC
-            for (Entity entity : npc) {
-                if (entity != null) {
-                    entity.draw(g2);
+            // Adds objects
+            for (Entity entity : obj){
+                if (entity != null){
+                    entityList.add(entity);
                 }
             }
 
-            // Player
-            player.draw(g2);
+            // Sort entity list
+            entityList.sort(new Comparator<Entity>() {
+                @Override
+                public int compare(Entity e1, Entity e2) {
+                    return Integer.compare(e1.worldY, e2.worldY);
+                }
+            });
+
+            // Draw entities
+            for (Entity entity : entityList){
+                entity.draw(g2);
+            }
+
+            // Clear list
+            entityList.clear();
 
             // UI
             ui.draw(g2);
 
+            // Debug
             if (keyHandler.checkDrawTime) {
                 long drawEnd = System.nanoTime();
                 long passed = drawEnd - drawStart;
@@ -180,16 +214,27 @@ public class GamePanel extends JPanel implements Runnable{
 
     }
 
+    /**
+     * Begins playing music
+     * @param i The index of the music to play
+     */
     public void playMusic(int i){
         music.setFile(i);
         music.play();
         music.loop();
     }
 
+    /**
+     * Stops music from playing
+     */
     public void stopMusic(){
         music.stop();
     }
 
+    /**
+     * Plays sound effect
+     * @param i The index of the sound effect to play
+     */
     public void playSE(int i){
         SE.setFile(i);
         SE.play();

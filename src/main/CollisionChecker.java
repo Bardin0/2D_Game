@@ -1,7 +1,6 @@
 package main;
 
 import entity.Entity;
-import object.SuperObject;
 
 
 public class CollisionChecker {
