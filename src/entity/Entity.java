@@ -19,6 +19,7 @@ public class Entity {
 
     public int spriteCounter = 0;
     public int spriteNum = 1;
+    public int standCounter = 0;
 
     public Rectangle solidArea = new Rectangle(0, 0, 48, 48);
     public boolean collisionOn = false;
@@ -33,10 +34,13 @@ public class Entity {
     public BufferedImage image, image2, image3;
     public String name;
     public boolean collision = false;
+    public boolean invincible = false;
+    public int invincibleCounter = 0;
 
     // Stats
     public int maxLife;
     public int life;
+    public int type; // 0 = player, 1 = NPC, 2 = monster
 
     GamePanel gp;
 
@@ -114,7 +118,14 @@ public class Entity {
         collisionOn = false;
         gp.checker.checkTile(this);
         gp.checker.checkObject(this,false);
-        gp.checker.checkPlayer(this);
+        gp.checker.checkEntity(this,gp.npc);
+        gp.checker.checkEntity(this,gp.monster);
+       boolean contactPlayer =  gp.checker.checkPlayer(this);
+
+       if (this.type == 2 && contactPlayer && !gp.player.invincible){
+            gp.player.life-=1;
+            gp.player.invincible = true;
+       }
 
         if (!collisionOn){
             switch (direction){

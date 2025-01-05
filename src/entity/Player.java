@@ -61,7 +61,7 @@ public class Player extends Entity{
 
     public void update(){
 
-        if (keyH.downPressed || keyH.leftPressed || keyH.upPressed || keyH.rightPressed) {
+        if (keyH.downPressed || keyH.leftPressed || keyH.upPressed || keyH.rightPressed || keyH.enterPressed) {
             if (keyH.upPressed){
                 direction = "up";
             }
@@ -87,10 +87,12 @@ public class Player extends Entity{
             int npcIndex = gp.checker.checkEntity(this,gp.npc);
             interactNPC(npcIndex);
 
+            // Check monster collision
+            int monsterIndex = gp.checker.checkEntity(this,gp.monster);
+            contactMonster(monsterIndex);
+
             // Check event
             gp.eventH.checkEvent();
-
-            gp.keyHandler.enterPressed = false;
 
             // If collision is false, player can move
             if (!collisionOn){
@@ -110,6 +112,8 @@ public class Player extends Entity{
                 }
             }
 
+            gp.keyHandler.enterPressed = false;
+
             spriteCounter ++;
             if (spriteCounter > 12){
                 if (spriteNum == 1){
@@ -119,7 +123,23 @@ public class Player extends Entity{
                 }
                 spriteCounter = 0;
             }
+            else{
+                standCounter++;
+                if (standCounter == 20){
+                    spriteNum = 1;
+                    standCounter = 0;
+                }
+            }
         }
+
+        if (invincible){
+            invincibleCounter++;
+            if(invincibleCounter > 60){
+                invincible = false;
+                invincibleCounter = 0;
+            }
+        }
+
     }
 
     public void pickupObject(int i){
@@ -164,7 +184,15 @@ public class Player extends Entity{
                 break;
         }
 
+        // Set transparency to player if invincible
+        if (invincible){
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3F));
+        }
+
         g2.drawImage(image,screenX,screenY,null);
+
+        // Reset g2 transparency
+        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1F));
     }
 
     public void interactNPC(int i){
@@ -175,6 +203,19 @@ public class Player extends Entity{
                 gp.npc[i].speak();
             }
         }
+    }
+
+    public void contactMonster(int i){
+
+        if (i != 999){
+            if (!invincible){
+                life-=1;
+                invincible = true;
+            }
+
+        }
 
     }
+
+
 }
