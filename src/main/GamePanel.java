@@ -7,7 +7,6 @@ import tile.TileManager;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 
 public class GamePanel extends JPanel implements Runnable{
@@ -121,13 +120,11 @@ public class GamePanel extends JPanel implements Runnable{
         }
     }
 
-    /**
-     * Updates player positions based off of key presses
-     */
+
     public void update(){
 
         if (gameState == playState){
-            // Player
+
             player.update();
 
             for (Entity entity: npc){
@@ -136,14 +133,17 @@ public class GamePanel extends JPanel implements Runnable{
                 }
             }
 
-            for (Entity entity: monster){
-                if (entity != null){
-                    entity.update();
+            for (int i = 0; i < monster.length; i++){
+                if (monster[i] != null){
+                    if (monster[i].alive && !monster[i].dying){
+                        monster[i].update();
+                    }
+                    if (!monster[i].alive){
+                        monster[i] = null;
+                    }
                 }
             }
-
         }
-
     }
 
     /**

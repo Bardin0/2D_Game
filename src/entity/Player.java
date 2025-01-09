@@ -2,13 +2,9 @@ package entity;
 
 import main.KeyHandler;
 import main.GamePanel;
-import main.UtilityTool;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.util.Objects;
 
 public class Player extends Entity{
 
@@ -29,8 +25,12 @@ public class Player extends Entity{
         solidAreaDefaultX = 8;
         solidAreaDefaultY = 16;
 
+        attackArea.width = 36;
+        attackArea.height = 36;
+
         setDefaultValues();
         getPlayerImage();
+        getPlayerAttackImage();
 
     }
 
@@ -48,20 +48,34 @@ public class Player extends Entity{
 
     public void getPlayerImage(){
 
-        up1 = setup("player/boy_up_1");
-        up2 = setup("player/boy_up_2");
-        down1 = setup("player/boy_down_1");
-        down2 = setup("player/boy_down_2");
-        left1 = setup("player/boy_left_1");
-        left2 = setup("player/boy_left_2");
-        right1 = setup("player/boy_right_1");
-        right2 = setup("player/boy_right_2");
+        up1 = setup("player/boy_up_1", gp.tileSize, gp.tileSize);
+        up2 = setup("player/boy_up_2", gp.tileSize, gp.tileSize);
+        down1 = setup("player/boy_down_1", gp.tileSize, gp.tileSize);
+        down2 = setup("player/boy_down_2", gp.tileSize, gp.tileSize);
+        left1 = setup("player/boy_left_1", gp.tileSize, gp.tileSize);
+        left2 = setup("player/boy_left_2", gp.tileSize, gp.tileSize);
+        right1 = setup("player/boy_right_1", gp.tileSize, gp.tileSize);
+        right2 = setup("player/boy_right_2", gp.tileSize, gp.tileSize);
 
+    }
+
+    public void getPlayerAttackImage(){
+        attackUp1 = setup("player/boy_attack_up_1", gp.tileSize, gp.tileSize*2);
+        attackUp2 = setup("player/boy_attack_up_2", gp.tileSize, gp.tileSize*2);
+        attackDown1 = setup("player/boy_attack_down_1", gp.tileSize, gp.tileSize*2);
+        attackDown2 = setup("player/boy_attack_down_2", gp.tileSize, gp.tileSize*2);
+        attackLeft1 = setup("player/boy_attack_left_1", gp.tileSize*2, gp.tileSize);
+        attackLeft2 = setup("player/boy_attack_left_2", gp.tileSize*2, gp.tileSize);
+        attackRight1 = setup("player/boy_attack_right_1", gp.tileSize*2, gp.tileSize);
+        attackRight2 = setup("player/boy_attack_right_2", gp.tileSize*2, gp.tileSize);
     }
 
     public void update(){
 
-        if (keyH.downPressed || keyH.leftPressed || keyH.upPressed || keyH.rightPressed || keyH.enterPressed) {
+        if (attacking){
+            attacking();
+        }
+        else if (keyH.downPressed || keyH.leftPressed || keyH.upPressed || keyH.rightPressed || keyH.enterPressed) {
             if (keyH.upPressed){
                 direction = "up";
             }
@@ -71,7 +85,7 @@ public class Player extends Entity{
             else if (keyH.leftPressed){
                 direction = "left";
             }
-            else {
+            else if (keyH.rightPressed){
                 direction = "right";
             }
 
@@ -95,7 +109,7 @@ public class Player extends Entity{
             gp.eventH.checkEvent();
 
             // If collision is false, player can move
-            if (!collisionOn){
+            if (!collisionOn && !keyH.enterPressed){
                 switch (direction){
                     case "up":
                         worldY -= speed;
@@ -123,13 +137,6 @@ public class Player extends Entity{
                 }
                 spriteCounter = 0;
             }
-            else{
-                standCounter++;
-                if (standCounter == 20){
-                    spriteNum = 1;
-                    standCounter = 0;
-                }
-            }
         }
 
         if (invincible){
@@ -138,6 +145,53 @@ public class Player extends Entity{
                 invincible = false;
                 invincibleCounter = 0;
             }
+        }
+    }
+
+    public void attacking(){
+
+        spriteCounter++;
+
+        if (spriteCounter <= 5){
+            spriteNum = 1;
+        }
+        if (spriteCounter > 5 && spriteCounter <= 25){
+            spriteNum = 2;
+
+            // Save the current player position and solid area
+            int currentWorldX = worldX;
+            int currentWorldY = worldY;
+            int solidAreaWidth = solidArea.width;
+            int solidAreaHeight = solidArea.height;
+
+            // adjust player position for attack
+
+            switch(direction){
+                case"up": worldY -= attackArea.height; break;
+                case"down": worldY += attackArea.height; break;
+                case"left": worldX -= attackArea.width; break;
+                case"right": worldX += attackArea.width; break;
+            }
+
+            // attackArea become solidArea
+            solidArea.width = attackArea.width;
+            solidArea.height = attackArea.height;
+
+            //Check monster collision with updated position
+            int monsterIndex = gp.checker.checkEntity(this,gp.monster);
+            damageMonster(monsterIndex);
+
+            // Restore data
+            worldX = currentWorldX;
+            worldY = currentWorldY;
+            solidArea.height = solidAreaHeight;
+            solidArea.width = solidAreaWidth;
+
+        }
+        if (spriteCounter > 25){
+            spriteNum = 1;
+            spriteCounter = 0;
+            attacking = false;
         }
 
     }
@@ -152,34 +206,72 @@ public class Player extends Entity{
     public void draw(Graphics2D g2){
 
         BufferedImage image = null;
+        int tempScreenX = screenX;
+        int tempScreenY = screenY;
 
         switch(direction){
             case "up":
-                if (spriteNum == 1){
-                    image = up1;
+
+                if (!attacking){
+                    if (spriteNum == 1){
+                        image = up1;
+                    }else{
+                        image = up2;
+                    }
                 }else{
-                    image = up2;
+                    tempScreenY = screenY - gp.tileSize;
+                    if (spriteNum == 1){
+                        image = attackUp1;
+                    }else{
+                        image = attackUp2;
+                    }
                 }
+
                 break;
             case "down":
-                if (spriteNum == 1){
-                    image = down1;
+                if (!attacking){
+                    if (spriteNum == 1){
+                        image = down1;
+                    }else{
+                        image = down2;
+                    }
                 }else{
-                    image = down2;
+                    if (spriteNum == 1){
+                        image = attackDown1;
+                    }else{
+                        image = attackDown2;
+                    }
                 }
                 break;
             case "left":
-                if (spriteNum == 1){
-                    image = left1;
+                if (!attacking){
+                    if (spriteNum == 1){
+                        image = left1;
+                    }else{
+                        image = left2;
+                    }
                 }else{
-                    image = left2;
+                    tempScreenX = screenX - gp.tileSize;
+                    if (spriteNum == 1){
+                        image = attackLeft1;
+                    }else{
+                        image = attackLeft2;
+                    }
                 }
                 break;
             case "right":
-                if (spriteNum == 1){
-                    image = right1;
+                if (!attacking){
+                    if (spriteNum == 1){
+                        image = right1;
+                    }else{
+                        image = right2;
+                    }
                 }else{
-                    image = right2;
+                    if (spriteNum == 1){
+                        image = attackRight1;
+                    }else{
+                        image = attackRight2;
+                    }
                 }
                 break;
         }
@@ -189,7 +281,7 @@ public class Player extends Entity{
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3F));
         }
 
-        g2.drawImage(image,screenX,screenY,null);
+        g2.drawImage(image,tempScreenX,tempScreenY,null);
 
         // Reset g2 transparency
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1F));
@@ -197,10 +289,13 @@ public class Player extends Entity{
 
     public void interactNPC(int i){
 
-        if (i != 999){
-            if (gp.keyHandler.enterPressed){
+        if (gp.keyHandler.enterPressed){
+            if (i != 999){
                 gp.gameState = gp.dialogueState;
                 gp.npc[i].speak();
+            } else{
+                gp.playSE(6);
+                attacking = true;
             }
         }
     }
@@ -209,8 +304,27 @@ public class Player extends Entity{
 
         if (i != 999){
             if (!invincible){
+                gp.playSE(7);
                 life-=1;
                 invincible = true;
+            }
+
+        }
+    }
+
+    public void damageMonster(int i){
+
+        if (i != 999) {
+
+            if (!gp.monster[i].invincible){
+                gp.playSE(5);
+                gp.monster[i].life -= 1;
+                gp.monster[i].invincible = true;
+                gp.monster[i].damageReaction();
+
+                if (gp.monster[i].life <= 0){
+                    gp.monster[i].dying = true;
+                }
             }
 
         }

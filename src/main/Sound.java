@@ -18,6 +18,10 @@ public class Sound {
         soundURL[2] = getClass().getClassLoader().getResource("sound/powerup.wav");
         soundURL[3] = getClass().getClassLoader().getResource("sound/unlock.wav");
         soundURL[4] = getClass().getClassLoader().getResource("sound/fanfare.wav");
+        soundURL[5] = getClass().getClassLoader().getResource("sound/hitmonster.wav");
+        soundURL[6] = getClass().getClassLoader().getResource("sound/swingsword.wav");
+        soundURL[7] = getClass().getClassLoader().getResource("sound/receivedamage.wav");
+
     }
 
     public void setFile(int i){
@@ -29,7 +33,7 @@ public class Sound {
             clip.open(ais);
 
         }catch(Exception e){
-            e.printStackTrace();
+            throw new RuntimeException();
         }
     }
 
