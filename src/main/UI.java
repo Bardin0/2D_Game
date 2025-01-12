@@ -7,17 +7,16 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class UI {
 
     GamePanel gp;
     Graphics2D g2;
-    Font arial_40, arial_80B, GomePixel;
-    public boolean messageOn = false;
-    public boolean gameFinished = false;
-    public String message = "";
-    int messageCounter = 0;
+    Font arial_40, arial_80B, customFont;
+    ArrayList<String> message = new ArrayList<>();
+    ArrayList<Integer> messageCounter = new ArrayList<>();
     public String currentDialouge = "";
     public int commandNumber = 0;
 
@@ -29,9 +28,9 @@ public class UI {
         arial_40 = new Font("Arial", Font.PLAIN, 40);
         arial_80B = new Font("Arial", Font.BOLD, 80);
 
-        InputStream is = Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("fonts/GomePixel-ARJd7.otf"));
+        InputStream is = Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("fonts/Pixeboy-z8XGD.ttf"));
         try {
-            GomePixel = Font.createFont(Font.TRUETYPE_FONT,is);
+            customFont = Font.createFont(Font.TRUETYPE_FONT,is);
         } catch (FontFormatException | IOException e) {
             throw new RuntimeException(e);
         }
@@ -43,15 +42,10 @@ public class UI {
         heartBlank = heart.image3;
     }
 
-    public void showMessage(String text){
-        message = text;
-        messageOn = true;
-    }
-
     public void draw(Graphics2D g2){
         this.g2 = g2;
 
-        g2.setFont(GomePixel);
+        g2.setFont(customFont);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2.setColor(Color.white);
 
@@ -60,6 +54,7 @@ public class UI {
         }
         else if (gp.gameState == gp.playState){
             drawPlayerLife();
+            drawMessage();
         }
         else if (gp.gameState == gp.pauseState){
             drawPlayerLife();
@@ -227,7 +222,7 @@ public class UI {
 
         // Text
         g2.setColor(Color.white);
-        g2.setFont(new Font("Arial", Font.PLAIN,32));
+        g2.setFont(g2.getFont().deriveFont(32F));
 
         int textX = frameX + 20;
         int textY = frameY + gp.tileSize;
@@ -261,7 +256,7 @@ public class UI {
 
         // Reset textY
         textY = frameY + gp.tileSize;
-        String value = "";
+        String value;
 
         // Level
         value = String.valueOf(gp.player.level);
@@ -325,7 +320,42 @@ public class UI {
         //Shield
         g2.drawImage(gp.player.currentShield.down1, tailX - gp.tileSize, textY+7, null);
 
+        g2.setFont(customFont);
 
     }
 
+    public void addMessage(String text){
+
+        message.add(text);
+        messageCounter.add(0);
+
+    }
+
+    public void drawMessage(){
+
+        int messageX = gp.tileSize;
+        int messageY = gp.tileSize*4;
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 32F));
+
+        for (int i = 0; i < message.size(); i++){
+            if (message.get(i) != null) {
+
+                g2.setColor(Color.black);
+                g2.drawString(message.get(i), messageX+2, messageY+2);
+
+                g2.setColor(Color.white);
+                g2.drawString(message.get(i), messageX, messageY);
+
+                int counter = messageCounter.get(i) + 1;
+                messageCounter.set(i,counter);
+                messageY += 50;
+
+                if (messageCounter.get(i) > 180){
+                    message.remove(i);
+                    messageCounter.remove(i);
+                }
+            }
+        }
+
+    }
 }

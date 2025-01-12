@@ -98,6 +98,7 @@ public class EventHandler {
             gp.playSE(2);
             gp.ui.currentDialouge = "You drink the water and gain health";
             gp.player.life = gp.player.maxLife;
+            gp.aSetter.setMonster();
         }
 
     }

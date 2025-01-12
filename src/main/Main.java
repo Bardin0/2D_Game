@@ -8,7 +8,7 @@ public class Main {
         JFrame window = new JFrame();
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setResizable(false);
-        window.setTitle("Blue Boy Adventure");
+        window.setTitle("Unc's Journey");
 
         GamePanel gamepanel = new GamePanel();
         window.add(gamepanel);

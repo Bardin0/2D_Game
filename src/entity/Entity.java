@@ -65,8 +65,6 @@ public class Entity {
     public int attackValue;
     public int defenseValue;
 
-
-
     GamePanel gp;
 
     public Entity(GamePanel gp){
@@ -188,7 +186,14 @@ public class Entity {
 
        if (this.type == 2 && contactPlayer && !gp.player.invincible){
            gp.playSE(7);
-            gp.player.life-=1;
+
+           int damage = attack - gp.player.defense;
+
+           if (damage < 0){
+               damage = 0;
+           }
+
+            gp.player.life -= damage;
             gp.player.invincible = true;
        }
 
