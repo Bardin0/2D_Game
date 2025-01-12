@@ -12,7 +12,6 @@ import java.util.Objects;
 public class Entity {
 
     public int worldX, worldY;
-    public int speed;
 
     public BufferedImage up1, up2, down1, down2, right1, right2, left1, left2;
     public BufferedImage attackUp1, attackUp2, attackDown1, attackDown2, attackLeft1, attackLeft2, attackRight1, attackRight2;
@@ -39,17 +38,32 @@ public class Entity {
     public boolean attacking = false;
     public int invincibleCounter = 0;
 
+    int dyingCounter = 0;
+    private int swapTracker = 0;
+    boolean hpBarOn = false;
+    int hpBarCounter = 0;
+    public boolean alive = true;
+    public boolean dying = false;
 
     // Stats
     public int maxLife;
     public int life;
     public int type; // 0 = player, 1 = NPC, 2 = monster
-    public boolean alive = true;
-    public boolean dying = false;
-    int dyingCounter = 0;
-    private int swapTracker = 0;
-    boolean hpBarOn = false;
-    int hpBarCounter = 0;
+    public int level;
+    public int speed;
+    public int strength;
+    public int dexterity;
+    public int defense;
+    public int attack;
+    public int exp;
+    public int nextLevelExp;
+    public int coin;
+    public Entity currentWeapon;
+    public Entity currentShield;
+
+    // Item attributes
+    public int attackValue;
+    public int defenseValue;
 
 
 
