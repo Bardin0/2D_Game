@@ -12,6 +12,7 @@ public class Player extends Entity{
 
     public final int screenX;
     public final int screenY;
+    public boolean attackCanceled = false;
 
     public Player(GamePanel gp, KeyHandler keyH){
 
@@ -126,6 +127,13 @@ public class Player extends Entity{
                 }
             }
 
+            if (keyH.enterPressed && !attackCanceled){
+                gp.playSE(6);
+                attacking = true;
+                spriteCounter = 0;
+            }
+
+            attackCanceled = false;
             gp.keyHandler.enterPressed = false;
 
             spriteCounter ++;
@@ -198,9 +206,6 @@ public class Player extends Entity{
 
     public void pickupObject(int i){
 
-        if (i != 999){
-
-        }
     }
 
     public void draw(Graphics2D g2){
@@ -291,11 +296,9 @@ public class Player extends Entity{
 
         if (gp.keyHandler.enterPressed){
             if (i != 999){
+                attackCanceled = true;
                 gp.gameState = gp.dialogueState;
                 gp.npc[i].speak();
-            } else{
-                gp.playSE(6);
-                attacking = true;
             }
         }
     }
