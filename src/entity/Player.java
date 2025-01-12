@@ -2,11 +2,13 @@ package entity;
 
 import main.KeyHandler;
 import main.GamePanel;
+import object.OBJ_Key;
 import object.OBJ_ShieldNormal;
 import object.OBJ_SwordNormal;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 public class Player extends Entity{
 
@@ -15,6 +17,9 @@ public class Player extends Entity{
     public final int screenX;
     public final int screenY;
     public boolean attackCanceled = false;
+
+    public ArrayList<Entity> inventory = new ArrayList<>();
+    public final int maxInventorySpace = 20;
 
     public Player(GamePanel gp, KeyHandler keyH){
 
@@ -34,6 +39,27 @@ public class Player extends Entity{
         setDefaultValues();
         getPlayerImage();
         getPlayerAttackImage();
+        setItems();
+
+    }
+
+    public void setItems(){
+
+        inventory.add(currentWeapon);
+        inventory.add(currentShield);
+        inventory.add(new OBJ_Key(gp));
+        inventory.add(currentWeapon);
+        inventory.add(currentShield);
+        inventory.add(new OBJ_Key(gp));
+        inventory.add(currentWeapon);
+        inventory.add(currentShield);
+        inventory.add(new OBJ_Key(gp));
+        inventory.add(currentWeapon);
+        inventory.add(currentShield);
+        inventory.add(new OBJ_Key(gp));
+        inventory.add(currentWeapon);
+        inventory.add(currentShield);
+        inventory.add(new OBJ_Key(gp));
 
     }
 
@@ -65,7 +91,6 @@ public class Player extends Entity{
         return strength * currentWeapon.attackValue;
 
     }
-
 
     public int getDefense(){
 
