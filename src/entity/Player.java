@@ -2,6 +2,7 @@ package entity;
 
 import main.KeyHandler;
 import main.GamePanel;
+import object.OBJ_Fireball;
 import object.OBJ_Key;
 import object.OBJ_ShieldNormal;
 import object.OBJ_SwordNormal;
@@ -64,10 +65,15 @@ public class Player extends Entity{
         exp = 0;
         nextLevelExp = 5;
         coin = 0;
+        ammo = 10;
         currentWeapon = new OBJ_SwordNormal(gp);
         currentShield = new OBJ_ShieldNormal(gp);
         attack = getAttack();   // Calculated using strength and attackValue of weapon
         defense = getDefense(); // Calculated using dexterity and defenseValue of shield
+        projectile = new OBJ_Fireball(gp);
+
+        maxMana = 4;
+        mana = maxMana;
 
     }
 
@@ -198,12 +204,26 @@ public class Player extends Entity{
             }
         }
 
+        if (gp.keyHandler.shootKeyPressed && !projectile.alive && shotAvailable == 30 && projectile.hasResource(this)){
+
+            projectile.set(worldX, worldY, direction, true, this);
+            projectile.subtractResource(this);
+
+            gp.projectileList.add(projectile);
+            gp.playSE(10); // Play fireball sound
+            shotAvailable = 0;
+        }
+
         if (invincible){
             invincibleCounter++;
             if(invincibleCounter > 60){
                 invincible = false;
                 invincibleCounter = 0;
             }
+        }
+
+        if (shotAvailable < 30){
+            shotAvailable++;
         }
     }
 
@@ -238,7 +258,7 @@ public class Player extends Entity{
 
             //Check monster collision with updated position
             int monsterIndex = gp.checker.checkEntity(this,gp.monster);
-            damageMonster(monsterIndex);
+            damageMonster(monsterIndex, attack);
 
             // Restore data
             worldX = currentWorldX;
@@ -391,7 +411,7 @@ public class Player extends Entity{
         }
     }
 
-    public void damageMonster(int i){
+    public void damageMonster(int i, int attack){
 
         if (i != 999) {
 

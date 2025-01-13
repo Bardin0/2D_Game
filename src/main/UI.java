@@ -2,6 +2,7 @@ package main;
 
 import entity.Entity;
 import object.OBJ_Heart;
+import object.OBJ_ManaCrystal;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -23,7 +24,7 @@ public class UI {
     public int slotCol = 0;
     public int slotRow = 0;
 
-    BufferedImage heartFull, heartHalf, heartBlank;
+    BufferedImage heartFull, heartHalf, heartBlank, crystalFull, crystalBlank;
 
 
     public UI(GamePanel gp){
@@ -43,6 +44,10 @@ public class UI {
         heartFull = heart.image;
         heartHalf = heart.image2;
         heartBlank = heart.image3;
+
+        Entity crystal = new OBJ_ManaCrystal(gp);
+        crystalFull = crystal.image;
+        crystalBlank = crystal.image2;
     }
 
     public void draw(Graphics2D g2){
@@ -213,6 +218,28 @@ public class UI {
             }
             x += gp.tileSize;
         }
+
+        // Draw max mana
+        x = (gp.tileSize/2) - 5;
+        y = (int) (gp.tileSize * 1.5);
+        i = 0;
+        while (i < gp.player.maxMana){
+            g2.drawImage(crystalBlank, x, y, null);
+            i++;
+            x += 35;
+        }
+
+        x = (gp.tileSize/2) - 5;
+        i = 0;
+
+        while (i < gp.player.mana){
+            g2.drawImage(crystalFull, x, y, null);
+            i++;
+            x += 35;
+        }
+
+
+
     }
 
     public void drawMenuScreen(){
@@ -236,6 +263,8 @@ public class UI {
         g2.drawString("Level", textX, textY);
         textY += lineHeight;
         g2.drawString("Life", textX, textY);
+        textY += lineHeight;
+        g2.drawString("Mana", textX, textY);
         textY += lineHeight;
         g2.drawString("Strength", textX, textY);
         textY += lineHeight;
@@ -271,6 +300,12 @@ public class UI {
 
         // Life
         value = gp.player.life + "/" + gp.player.maxLife;
+        textX = getXForAlignToRightText(value, tailX);
+        g2.drawString(value, textX, textY);
+        textY += lineHeight;
+
+        // Mana
+        value = gp.player.mana + "/" + gp.player.maxMana;
         textX = getXForAlignToRightText(value, tailX);
         g2.drawString(value, textX, textY);
         textY += lineHeight;

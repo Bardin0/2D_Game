@@ -57,13 +57,19 @@ public class Entity {
     public int exp;
     public int nextLevelExp;
     public int coin;
+    public int mana;
+    public int maxMana;
+    public int ammo;
     public Entity currentWeapon;
     public Entity currentShield;
+    public Projectile projectile;
 
     // Item attributes
     public int attackValue;
     public int defenseValue;
     public String description = "";
+    public int useCost = 0;
+    public int shotAvailable = 0;
 
     public int type; // 0 = player, 1 = NPC, 2 = monster
     public final int typePlayer = 0, typeNPC = 1, typeMonster = 2, typeSword = 3, typeAxe = 4, typeShield = 5, typeConsumable = 6;
@@ -186,17 +192,9 @@ public class Entity {
         gp.checker.checkEntity(this,gp.monster);
        boolean contactPlayer =  gp.checker.checkPlayer(this);
 
+       // Monster contacts player
        if (this.type == 2 && contactPlayer && !gp.player.invincible){
-           gp.playSE(7);
-
-           int damage = attack - gp.player.defense;
-
-           if (damage < 0){
-               damage = 0;
-           }
-
-            gp.player.life -= damage;
-            gp.player.invincible = true;
+           damagePlayer(attack);
        }
 
         if (!collisionOn){
@@ -232,6 +230,10 @@ public class Entity {
                 invincible = false;
                 invincibleCounter = 0;
             }
+        }
+
+        if (shotAvailable < 30){
+            shotAvailable++;
         }
 
     }
@@ -282,5 +284,19 @@ public class Entity {
     public void changeAlpha(Graphics2D g2, float alpha){
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
     }
+
+    public void damagePlayer(int attack){
+        gp.playSE(7);
+
+        int damage = attack - gp.player.defense;
+
+        if (damage < 0){
+            damage = 0;
+        }
+
+        gp.player.life -= damage;
+        gp.player.invincible = true;
+    }
+
 
 }
