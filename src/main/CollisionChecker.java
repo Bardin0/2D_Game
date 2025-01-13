@@ -110,12 +110,18 @@ public class CollisionChecker {
         return index;
     }
 
+    /**
+     * Checks an entity against all entities in a list to see if collision occurred between them
+     * @param entity The entity to check with
+     * @param target List of entities to check against
+     * @return Returns the index of the entity collided with or 999 if no collision occurred
+     */
     public int checkEntity(Entity entity, Entity[] target){
 
         int index = 999;
 
         for (int i = 0; i < target.length; i++) {
-            if (target[i] != null) {
+            if (target[i] != null && !target[i].dying) {
 
                 // Get entity's solid area position
                 entity.solidArea.x = entity.worldX + entity.solidArea.x;

@@ -128,6 +128,7 @@ public class KeyHandler implements KeyListener {
     public void pauseState(int code){
         if (code == KeyEvent.VK_ESCAPE){
             gp.gameState = gp.playState;
+            gp.playMusic(0);
         }
     }
     public void dialogueState(int code){
@@ -166,9 +167,10 @@ public class KeyHandler implements KeyListener {
                 gp.ui.slotCol++;
                 gp.playSE(9);
             }
-
         }
-
+        if (code == KeyEvent.VK_ENTER){
+            gp.player.selectItem();
+        }
     }
 
 

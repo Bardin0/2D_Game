@@ -12,5 +12,6 @@ public class OBJ_ShieldNormal extends Entity {
         down1 = setup("objects/shield_wood", gp.tileSize, gp.tileSize);
         defenseValue = 1;
         description = "[Wooden Shield] - A basic \nshield, nothing special \nabout it.";
+        type = typeShield;
     }
 }

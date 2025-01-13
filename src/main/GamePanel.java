@@ -182,19 +182,19 @@ public class GamePanel extends JPanel implements Runnable{
                 }
             }
 
-            // Adds objects
-            for (Entity entity : obj){
-                if (entity != null){
-                    entityList.add(entity);
-                }
-            }
-
+            // Adds Monsters
             for (Entity entity: monster){
                 if (entity != null){
                     entityList.add(entity);
                 }
             }
 
+            // Adds objects
+            for (Entity entity : obj){
+                if (entity != null){
+                    entityList.add(entity);
+                }
+            }
             // Sort entity list
             entityList.sort(new Comparator<Entity>() {
                 @Override

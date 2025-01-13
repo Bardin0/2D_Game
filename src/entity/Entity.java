@@ -48,7 +48,6 @@ public class Entity {
     // Stats
     public int maxLife;
     public int life;
-    public int type; // 0 = player, 1 = NPC, 2 = monster
     public int level;
     public int speed;
     public int strength;
@@ -66,6 +65,9 @@ public class Entity {
     public int defenseValue;
     public String description = "";
 
+    public int type; // 0 = player, 1 = NPC, 2 = monster
+    public final int typePlayer = 0, typeNPC = 1, typeMonster = 2, typeSword = 3, typeAxe = 4, typeShield = 5, typeConsumable = 6;
+
     GamePanel gp;
 
     public Entity(GamePanel gp){
@@ -74,7 +76,10 @@ public class Entity {
 
     }
 
+    // Overwritten methods
     public void damageReaction(){}
+    public void use(Entity entity){}
+    public void setAction(){}
 
     public BufferedImage setup(String imagePath, int width, int height){
         UtilityTool uTool = new UtilityTool();
@@ -169,10 +174,6 @@ public class Entity {
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1F));
 
         }
-    }
-
-    public void setAction(){
-
     }
 
     public void update(){
@@ -274,7 +275,6 @@ public class Entity {
             }
         }
         if (dyingCounter > 40){
-            dying = false;
             alive = false;
         }
     }
