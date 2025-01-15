@@ -14,12 +14,12 @@ public class AssetSetter {
 
     public void setObject(){
         int i = 0;
-        gp.obj[i] = new OBJ_Key(gp);
+        gp.obj[i] = new OBJ_ManaCrystal(gp);
         gp.obj[i].worldX = gp.tileSize * 25;
         gp.obj[i].worldY = gp.tileSize * 23;
         i++;
 
-        gp.obj[i] = new OBJ_Key(gp);
+        gp.obj[i] = new OBJ_CoinBronze(gp);
         gp.obj[i].worldX = gp.tileSize * 21;
         gp.obj[i].worldY = gp.tileSize * 19;
         i++;
@@ -41,6 +41,10 @@ public class AssetSetter {
 
         gp.obj[i] = new OBJ_RedPotion(gp);
         gp.obj[i].worldX = gp.tileSize * 27;
+        gp.obj[i].worldY = gp.tileSize * 22;
+
+        gp.obj[i] = new OBJ_Heart(gp);
+        gp.obj[i].worldX = gp.tileSize * 28;
         gp.obj[i].worldY = gp.tileSize * 22;
     }
 

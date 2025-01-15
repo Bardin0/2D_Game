@@ -2,6 +2,9 @@ package monster;
 
 import entity.Entity;
 import main.GamePanel;
+import object.OBJ_CoinBronze;
+import object.OBJ_Heart;
+import object.OBJ_ManaCrystal;
 import object.OBJ_Rock;
 
 import java.util.Random;
@@ -89,6 +92,22 @@ public class MON_GreenSlime extends Entity {
     public void damageReaction() {
         actionLockCounter = 0;
         direction = gp.player.direction;
+    }
+
+    public void checkDrop(){
+
+        int i = new Random().nextInt(100)+1;
+
+        // Set drop percentages
+        if (i < 60){
+            dropItem(new OBJ_CoinBronze(gp));
+        } else if (i < 90) {
+            dropItem(new OBJ_ManaCrystal(gp));
+        }
+        else{
+            dropItem(new OBJ_Heart(gp));
+        }
+
     }
 
 

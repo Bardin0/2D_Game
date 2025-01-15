@@ -55,6 +55,7 @@ public class Player extends Entity{
         worldY = gp.tileSize*21;
         speed = 5;
         direction = "down";
+        type = typePlayer;
 
         // Stats
         level = 1;
@@ -202,6 +203,14 @@ public class Player extends Entity{
                 }
                 spriteCounter = 0;
             }
+
+            if(life > maxLife){
+                life = maxLife;
+            }
+
+            if(mana > maxMana){
+                mana = maxMana;
+            }
         }
 
         if (gp.keyHandler.shootKeyPressed && !projectile.alive && shotAvailable == 30 && projectile.hasResource(this)){
@@ -279,22 +288,30 @@ public class Player extends Entity{
 
         if (i != 999){
 
-            String text;
-
-            if (inventory.size() != maxInventorySpace){
-
-                inventory.add(gp.obj[i]);
-                gp.playSE(1);
-                text = "Picked up " + gp.obj[i].name;
-
+            // Pickup Only Items
+            if (gp.obj[i].type == typePickupOnly){
+                gp.obj[i].use(this);
+                gp.obj[i] = null;
             }
             else{
-                text = "Inventory Full";
+                //Inventory Items
+                String text;
+
+                if (inventory.size() != maxInventorySpace){
+
+                    inventory.add(gp.obj[i]);
+                    gp.playSE(1);
+                    text = "Picked up " + gp.obj[i].name;
+
+                }
+                else{
+                    text = "Inventory Full";
+                }
+
+                gp.ui.addMessage(text);
+                gp.obj[i] = null;
+
             }
-
-            gp.ui.addMessage(text);
-            gp.obj[i] = null;
-
         }
     }
 

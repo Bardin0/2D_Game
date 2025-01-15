@@ -65,14 +65,23 @@ public class Entity {
     public Projectile projectile;
 
     // Item attributes
+    public int value;
     public int attackValue;
     public int defenseValue;
     public String description = "";
     public int useCost = 0;
     public int shotAvailable = 0;
 
-    public int type; // 0 = player, 1 = NPC, 2 = monster
-    public final int typePlayer = 0, typeNPC = 1, typeMonster = 2, typeSword = 3, typeAxe = 4, typeShield = 5, typeConsumable = 6;
+    public int type;
+    public final int typePlayer = 0;
+    public final int typeNPC = 1;
+    public final int typeMonster = 2;
+    public final int typeSword = 3;
+    public final int typeAxe = 4;
+    public final int typeShield = 5;
+    public final int typeConsumable = 6;
+    public final int typePickupOnly = 7;
+
 
     GamePanel gp;
 
@@ -86,6 +95,7 @@ public class Entity {
     public void damageReaction(){}
     public void use(Entity entity){}
     public void setAction(){}
+    public void checkDrop(){}
 
     public BufferedImage setup(String imagePath, int width, int height){
         UtilityTool uTool = new UtilityTool();
@@ -174,7 +184,7 @@ public class Entity {
                 playDeathAnimation(g2);
             }
 
-            g2.drawImage(image,screenX,screenY,gp.tileSize,gp.tileSize,null);
+            g2.drawImage(image,screenX,screenY,null);
 
             // Reset g2 transparency
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1F));
@@ -296,6 +306,19 @@ public class Entity {
 
         gp.player.life -= damage;
         gp.player.invincible = true;
+    }
+
+    public void dropItem(Entity droppedItem){
+
+        for (int i = 0; i < gp.obj.length; i++){
+            if (gp.obj[i] == null){
+                gp.obj[i] = droppedItem;
+                gp.obj[i].worldX = worldX;
+                gp.obj[i].worldY = worldY;
+                break;
+            }
+        }
+
     }
 
 
