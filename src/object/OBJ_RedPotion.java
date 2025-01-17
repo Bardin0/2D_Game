@@ -21,7 +21,7 @@ public class OBJ_RedPotion extends Entity {
     public void use(Entity entity){
 
         gp.gameState = gp.dialogueState;
-        gp.ui.currentDialouge = "You drink the " + name + ". Your life has been recovered by " + value + ".";
+        gp.ui.currentDialogue = "You drink the " + name + ". Your life has been recovered by " + value + ".";
         entity.life += value;
         if(gp.player.life > gp.player.maxLife){
             gp.player.life = gp.player.maxLife;

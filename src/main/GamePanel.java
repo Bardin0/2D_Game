@@ -2,6 +2,7 @@ package main;
 
 import entity.Entity;
 import entity.Player;
+import tile.InteractiveTile;
 import tile.TileManager;
 
 import javax.swing.*;
@@ -20,10 +21,8 @@ public class GamePanel extends JPanel implements Runnable{
     public final int screenWidth = tileSize * maxScreenCol;
     public final int screenHeight = tileSize * maxScreenRow;
 
-
     // FPS
     int FPS = 60;
-
 
     // WORLD PARAMETERS
     public final int maxWorldCol = 50;
@@ -31,24 +30,24 @@ public class GamePanel extends JPanel implements Runnable{
 
 
     //System
+    Thread gameThread;
     TileManager tileM = new TileManager(this);
-    public KeyHandler keyHandler = new KeyHandler(this);
     Sound music = new Sound();
     Sound SE = new Sound();
+    public KeyHandler keyHandler = new KeyHandler(this);
     public CollisionChecker checker = new CollisionChecker(this);
     public AssetSetter aSetter = new AssetSetter(this);
     public UI ui= new UI(this);
     public EventHandler eventH = new EventHandler(this);
-    Thread gameThread;
-
 
     //Entity and Object
     public Player player = new Player(this, keyHandler);
     public Entity[] obj = new Entity[20];
     public Entity[] npc = new Entity[10];
-    ArrayList<Entity> entityList = new ArrayList<>();
     public ArrayList<Entity> projectileList = new ArrayList<>();
     public Entity[] monster = new Entity[20];
+    public InteractiveTile[] interactiveTiles = new InteractiveTile[50];
+    ArrayList<Entity> entityList = new ArrayList<>();
 
     //Game State
     public int gameState;
@@ -68,13 +67,14 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     /**
-     * Setup of the game, places all objects and Npc's on the map
+     * Setup of the game, places all entities on the map and sets gameState
      */
     public void setupGame(){
 
         aSetter.setObject();
         aSetter.setNPC();
         aSetter.setMonster();
+        aSetter.setInteractiveTiles();
         gameState = titleState;
 
     }
@@ -88,7 +88,7 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     /**
-     * Function to run the game
+     * Manages running the game using the delta method.
      */
     public void run(){
 
@@ -122,19 +122,23 @@ public class GamePanel extends JPanel implements Runnable{
         }
     }
 
-
+    /**
+     * Updates all entities on the map
+     */
     public void update(){
 
         if (gameState == playState){
 
             player.update();
 
+            // Updates all npcs
             for (Entity entity: npc){
                 if (entity != null){
                     entity.update();
                 }
             }
 
+            //Updates all monsters
             for (int i = 0; i < monster.length; i++){
                 if (monster[i] != null){
                     if (monster[i].alive && !monster[i].dying){
@@ -147,6 +151,7 @@ public class GamePanel extends JPanel implements Runnable{
                 }
             }
 
+            // Updates any projectiles on the map
             for (int i = 0; i < projectileList.size(); i++){
                 if (projectileList.get(i) != null){
                     if (projectileList.get(i).alive){
@@ -157,6 +162,15 @@ public class GamePanel extends JPanel implements Runnable{
                     }
                 }
             }
+
+            for (Entity entity: interactiveTiles){
+
+                if(entity != null){
+                    entity.update();
+                }
+
+            }
+
         }
     }
 
@@ -184,6 +198,13 @@ public class GamePanel extends JPanel implements Runnable{
 
             //Tile
             tileM.draw(g2);
+
+            // Interactive Tile
+            for (Entity entity: interactiveTiles){
+                if (entity != null){
+                    entity.draw(g2);
+                }
+            }
 
             // Add all entities to list
             entityList.add(player);
@@ -214,9 +235,8 @@ public class GamePanel extends JPanel implements Runnable{
                 if (entity != null){
                     entityList.add(entity);
                 }
+
             }
-
-
 
             // Sort entity list
             entityList.sort(new Comparator<Entity>() {

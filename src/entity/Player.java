@@ -164,6 +164,9 @@ public class Player extends Entity{
             int monsterIndex = gp.checker.checkEntity(this,gp.monster);
             contactMonster(monsterIndex);
 
+            // Check interactive tile collision
+            gp.checker.checkEntity(this,gp.interactiveTiles);
+
             // Check event
             gp.eventH.checkEvent();
 
@@ -268,6 +271,9 @@ public class Player extends Entity{
             //Check monster collision with updated position
             int monsterIndex = gp.checker.checkEntity(this,gp.monster);
             damageMonster(monsterIndex, attack);
+
+            int iTileIndex = gp.checker.checkEntity(this,gp.interactiveTiles);
+            damageInteractiveTile(iTileIndex);
 
             // Restore data
             worldX = currentWorldX;
@@ -469,7 +475,7 @@ public class Player extends Entity{
             gp.playSE(8);
 
             gp.gameState = gp.dialogueState;
-            gp.ui.currentDialouge = "You Leveled Up!";
+            gp.ui.currentDialogue = "You Leveled Up!";
         }
 
 
@@ -503,4 +509,21 @@ public class Player extends Entity{
 
     }
 
+    /**
+     * Checks to see if the player can damage an interactive tile.
+     * @param i The index of the interactive tile to check
+     */
+    public void damageInteractiveTile(int i ){
+
+        if (i != 999 && gp.interactiveTiles[i].destructible && gp.interactiveTiles[i].checkValidWeaponToBreak(this) && !gp.interactiveTiles[i].invincible){
+            gp.interactiveTiles[i].playSE();
+            gp.interactiveTiles[i].life--;
+            gp.interactiveTiles[i].invincible = true;
+
+            if (gp.interactiveTiles[i].life == 0) {
+                gp.interactiveTiles[i] = gp.interactiveTiles[i].getDestroyedForm();
+            }
+        }
+
+    }
 }

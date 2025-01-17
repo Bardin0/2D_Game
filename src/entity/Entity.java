@@ -200,6 +200,7 @@ public class Entity {
         gp.checker.checkObject(this,false);
         gp.checker.checkEntity(this,gp.npc);
         gp.checker.checkEntity(this,gp.monster);
+        gp.checker.checkEntity(this,gp.interactiveTiles);
        boolean contactPlayer =  gp.checker.checkPlayer(this);
 
        // Monster contacts player
@@ -253,7 +254,7 @@ public class Entity {
         if (dialogues[dialogueIndex] == null){
             dialogueIndex = 0;
         }
-        gp.ui.currentDialouge = dialogues[dialogueIndex];
+        gp.ui.currentDialogue = dialogues[dialogueIndex];
         dialogueIndex++;
 
         switch(gp.player.direction){

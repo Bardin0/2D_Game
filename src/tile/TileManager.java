@@ -5,12 +5,10 @@ import main.UtilityTool;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.BitSet;
 import java.util.Objects;
 
 public class TileManager {
@@ -98,6 +96,7 @@ public class TileManager {
         try {
 
             InputStream is = getClass().getClassLoader().getResourceAsStream(filePath);
+            assert is != null;
             BufferedReader br = new BufferedReader(new InputStreamReader((is)));
 
             int col = 0;
@@ -107,7 +106,7 @@ public class TileManager {
                 String line = br.readLine();
 
                 while (col < gp.maxWorldCol){
-                    String numbers[] = line.split(" ");
+                    String[] numbers = line.split(" ");
 
                     int num = Integer.parseInt(numbers[col]);
 
@@ -124,7 +123,7 @@ public class TileManager {
 
             br.close();
         }catch(Exception e){
-            e.printStackTrace();
+            throw new RuntimeException();
         }
     }
 

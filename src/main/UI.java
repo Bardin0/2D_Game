@@ -18,7 +18,7 @@ public class UI {
     Font arial_40, arial_80B, customFont;
     ArrayList<String> message = new ArrayList<>();
     ArrayList<Integer> messageCounter = new ArrayList<>();
-    public String currentDialouge = "";
+    public String currentDialogue = "";
     public int commandNumber = 0;
 
     public int slotCol = 0;
@@ -161,7 +161,7 @@ public class UI {
         x += gp.tileSize;
         y += gp.tileSize;
 
-        for(String line : currentDialouge.split("\n")){
+        for(String line : currentDialogue.split("\n")){
             g2.drawString(line,x,y);
             y += 40;
         }
