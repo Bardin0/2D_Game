@@ -7,6 +7,7 @@ import tile.TileManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Comparator;
 
@@ -16,10 +17,16 @@ public class GamePanel extends JPanel implements Runnable{
     final int originalTileSize = 16; // 16x16 tile
     final int scale = 4;
     public final int tileSize = originalTileSize * scale; // 48x48 tile
-    public final int maxScreenCol = 16;
+    public final int maxScreenCol = 20;
     public final int maxScreenRow = 12;
     public final int screenWidth = tileSize * maxScreenCol;
     public final int screenHeight = tileSize * maxScreenRow;
+
+    // Full screen
+    int fullScreenHeight = screenHeight;
+    int fullScreenWidth = screenWidth;
+    BufferedImage tempImage;
+    Graphics2D g2;
 
     // FPS
     int FPS = 60;
@@ -78,6 +85,22 @@ public class GamePanel extends JPanel implements Runnable{
         aSetter.setInteractiveTiles();
         gameState = titleState;
 
+        tempImage = new BufferedImage(fullScreenWidth, fullScreenHeight, BufferedImage.TYPE_INT_ARGB);
+        g2 = (Graphics2D) tempImage.getGraphics();  // set g2 to draw to tempImage
+
+        setFullScreen();
+    }
+
+    public void setFullScreen(){
+
+        // Get local screen device
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice gd = ge.getDefaultScreenDevice();
+        gd.setFullScreenWindow(Main.window);
+
+        //get full screen width and height
+        fullScreenHeight = Main.window.getHeight();
+        fullScreenWidth = Main.window.getWidth();
     }
 
     /**
@@ -110,6 +133,7 @@ public class GamePanel extends JPanel implements Runnable{
 
             if (delta >= 1){
                 update();
+                drawTempScreen();
                 repaint();  // calls the paint component method, unsure why this is used
                 delta--;
                 drawCount++;
@@ -187,15 +211,7 @@ public class GamePanel extends JPanel implements Runnable{
         }
     }
 
-    /**
-     * This is a built-in java method to draw things to a JPanel
-     * This method is responsible for drawing everything we see to the screen
-     * @param g the Graphics object to protect
-     */
-    public void paintComponent(Graphics g){
-
-        super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D)g;
+    public void drawTempScreen(){
 
         //Debug
         long drawStart = 0;
@@ -285,8 +301,18 @@ public class GamePanel extends JPanel implements Runnable{
             }
         }
 
-        g2.dispose();
+    }
 
+    /**
+     * This is a built-in java method to draw things to a JPanel
+     * This method is responsible for drawing everything we see to the screen
+     * @param g the Graphics object to protect
+     */
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g); // Clears the screen
+        if (tempImage != null) {
+            g.drawImage(tempImage, 0, 0, fullScreenWidth, fullScreenHeight, null);
+        }
     }
 
     /**

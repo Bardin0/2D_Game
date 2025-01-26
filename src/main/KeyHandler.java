@@ -136,6 +136,9 @@ public class KeyHandler implements KeyListener {
             gp.gameState = gp.playState;
             gp.playMusic(0);
         }
+        if (code == KeyEvent.VK_ENTER){
+            System.exit(0);
+        }
     }
     public void dialogueState(int code){
         if (code == KeyEvent.VK_ENTER){
