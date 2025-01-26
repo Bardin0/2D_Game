@@ -85,7 +85,7 @@ public class AssetSetter {
         gp.interactiveTiles[i] = new IT_DryTree(gp, 30, 12); i++;
         gp.interactiveTiles[i] = new IT_DryTree(gp, 31, 12); i++;
         gp.interactiveTiles[i] = new IT_DryTree(gp, 32, 12); i++;
-        gp.interactiveTiles[i] = new IT_DryTree(gp, 32, 12);
+        gp.interactiveTiles[i] = new IT_DryTree(gp, 33, 12);
 
     }
 

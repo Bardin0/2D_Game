@@ -4,6 +4,8 @@ import entity.Entity;
 import entity.Projectile;
 import main.GamePanel;
 
+import java.awt.*;
+
 public class OBJ_Rock extends Projectile {
 
     GamePanel gp;
@@ -50,6 +52,22 @@ public class OBJ_Rock extends Projectile {
 
     public void subtractResource(Entity user){
         user.mana -= useCost;
+    }
+
+    public Color getParticleColor() {
+        return new Color(70, 50, 0);
+    }
+
+    public int getParticleSize(){
+        return 10;   // 10 pixels
+    }
+
+    public int getParticleSpeed(){
+        return 1;
+    }
+
+    public int getParticleMaxLife(){
+        return 20;
     }
 
 }
