@@ -334,7 +334,7 @@ public class Player extends Entity{
             // Pickup Only Items
             if (gp.obj[i].type == typePickupOnly){
                 gp.obj[i].use(this);
-                gp.obj[i] = null;
+                gp.obj[i] = null;   // Remove from the map
             }
             else{
                 //Inventory Items
@@ -352,9 +352,9 @@ public class Player extends Entity{
                 }
 
                 gp.ui.addMessage(text);
-                gp.obj[i] = null;
 
             }
+            gp.obj[i] = null;
         }
     }
 
