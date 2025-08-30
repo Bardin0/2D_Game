@@ -64,6 +64,7 @@ public class GamePanel extends JPanel implements Runnable{
     public final int pauseState = 2;
     public final int dialogueState = 3;
     public final int menuState = 4;
+    public final int optionsState = 5;
 
 
     public GamePanel(){
@@ -188,8 +189,7 @@ public class GamePanel extends JPanel implements Runnable{
                 }
             }
 
-            // Update particles
-            for (int i = 0; i < particles.size(); i++){
+            for  (int i = 0; i < particles.size(); i++){
                 if (particles.get(i) != null){
                     if (particles.get(i).alive){
                         particles.get(i).update();
@@ -201,7 +201,6 @@ public class GamePanel extends JPanel implements Runnable{
             }
 
             for (Entity entity: interactiveTiles){
-
                 if(entity != null){
                     entity.update();
                 }

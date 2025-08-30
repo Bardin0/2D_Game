@@ -28,10 +28,13 @@ public class Sound {
 
     }
 
+    /**
+     * Loads an audio file to be played
+     * @param i The index of the sound file in the soundURL array
+     */
     public void setFile(int i){
 
         try{
-
             AudioInputStream ais = AudioSystem.getAudioInputStream(soundURL[i]);
             clip = AudioSystem.getClip();
             clip.open(ais);
@@ -41,14 +44,23 @@ public class Sound {
         }
     }
 
+    /**
+     * Plays the loaded audio file
+     */
     public void play(){
         clip.start();
     }
 
+    /**
+     * Loops the loaded audio file continuously
+     */
     public void loop(){
         clip.loop(Clip.LOOP_CONTINUOUSLY);
     }
 
+    /**
+     * Stops the loaded audio file from playing
+     */
     public void stop(){
         clip.stop();
     }

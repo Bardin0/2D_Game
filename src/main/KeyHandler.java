@@ -69,66 +69,84 @@ public class KeyHandler implements KeyListener {
         }
     }
 
+    /**
+     * Handler for when in the title game state
+     * @param code the key code given by key pressed by user.
+     */
     public void titleState(int code){
 
+        // Move cursor up
         if (code == KeyEvent.VK_W){
             gp.ui.commandNumber--;
+            // If it cant move up, start from bottom
             if (gp.ui.commandNumber < 0){
                 gp.ui.commandNumber = 2;
             }
         }
+
+        // Move cursor down
         if (code == KeyEvent.VK_S){
             gp.ui.commandNumber++;
+            // If it cant move down, start from top
             if (gp.ui.commandNumber > 2){
                 gp.ui.commandNumber = 0;
             }
         }
 
+        // Select option
         if (code == KeyEvent.VK_ENTER){
+            // Start Game
             if (gp.ui.commandNumber == 0){
                 gp.gameState = gp.playState;
                 gp.playMusic(0);
             }
+            // Load game
             else if (gp.ui.commandNumber == 1){
                 //add later
             }
+            // Quit
             else if (gp.ui.commandNumber == 2){
                 System.exit(0);
             }
         }
     }
 
+    /**
+     * Handles inputs while in play state
+     * @param code The key code given by user key press
+     */
     public void playState(int code){
+        switch (code){
+            case KeyEvent.VK_W:
+                upPressed = true;
+                break;
+            case KeyEvent.VK_A:
+                leftPressed = true;
+                break;
+            case KeyEvent.VK_S:
+                downPressed = true;
+                break;
+            case KeyEvent.VK_D:
+                rightPressed = true;
+                break;
+            case KeyEvent.VK_F:
+                shootKeyPressed = true;
+                break;
+            case KeyEvent.VK_ENTER:
+                enterPressed = true;
+                break;
+            case KeyEvent.VK_P:
+                gp.gameState = gp.pauseState;
+                gp.stopMusic();
+                break;
+            case KeyEvent.VK_C:
+                gp.gameState = gp.menuState;
+                break;
+            case KeyEvent.VK_T:
+                checkDrawTime = !checkDrawTime;
+                break;
+        }
 
-        if(code == KeyEvent.VK_W){
-            upPressed = true;
-        }
-        if(code == KeyEvent.VK_A){
-            leftPressed = true;
-        }
-        if(code == KeyEvent.VK_S){
-            downPressed = true;
-        }
-        if(code == KeyEvent.VK_D){
-            rightPressed = true;
-        }
-        if (code == KeyEvent.VK_ESCAPE) {
-            gp.gameState = gp.pauseState;
-        }
-        if (code == KeyEvent.VK_ENTER){
-            enterPressed = true;
-        }
-        if (code == KeyEvent.VK_C){
-            gp.gameState = gp.menuState;
-        }
-        if(code == KeyEvent.VK_F){
-            shootKeyPressed = true;
-        }
-
-        // Debug
-        if(code == KeyEvent.VK_T){
-            checkDrawTime = !checkDrawTime;
-        }
     }
 
     public void pauseState(int code){
@@ -140,11 +158,13 @@ public class KeyHandler implements KeyListener {
             System.exit(0);
         }
     }
+
     public void dialogueState(int code){
         if (code == KeyEvent.VK_ENTER){
             gp.gameState = gp.playState;
         }
     }
+
     public void menuState(int code){
         if (code == KeyEvent.VK_C){
             gp.gameState = gp.playState;
@@ -181,6 +201,5 @@ public class KeyHandler implements KeyListener {
             gp.player.selectItem();
         }
     }
-
 
 }

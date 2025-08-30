@@ -15,8 +15,10 @@ public class Player extends Entity{
 
     KeyHandler keyH;
 
+    // Coordinates on the screen
     public final int screenX;
     public final int screenY;
+
     public boolean attackCanceled = false;
 
     public ArrayList<Entity> inventory = new ArrayList<>();
@@ -24,12 +26,16 @@ public class Player extends Entity{
 
     public Player(GamePanel gp, KeyHandler keyH){
 
+        // Instantiate GamePanel and KeyHandler
         super(gp);
         this.keyH = keyH;
 
+        // Locks player to center of the screen
+        // The world moves around the player, not the player moving in the world
         screenX = gp.screenWidth/2 - (gp.tileSize/2);
         screenY = gp.screenHeight/2 - (gp.tileSize/2);
 
+        // Define player's solid area
         solidArea = new Rectangle(8,16,28,28);
         solidAreaDefaultX = 8;
         solidAreaDefaultY = 16;
@@ -38,14 +44,6 @@ public class Player extends Entity{
         getPlayerImage();
         getPlayerAttackImage();
         setItems();
-
-    }
-
-    public void setItems(){
-
-        inventory.add(currentWeapon);
-        inventory.add(currentShield);
-        inventory.add(new OBJ_Key(gp));
 
     }
 
@@ -78,19 +76,20 @@ public class Player extends Entity{
 
     }
 
-    public int getAttack(){
+    /**
+     * Sets the player's starting items in their inventory.
+     */
+    public void setItems(){
 
-        attackArea = currentWeapon.attackArea;
-        return strength * currentWeapon.attackValue;
-
-    }
-
-    public int getDefense(){
-
-        return dexterity * currentShield.defenseValue;
+        inventory.add(currentWeapon);
+        inventory.add(currentShield);
+        inventory.add(new OBJ_Key(gp));
 
     }
 
+    /**
+     * Loads the players images
+     */
     public void getPlayerImage(){
 
         up1 = setup("player/boy_up_1", gp.tileSize, gp.tileSize);
@@ -104,6 +103,9 @@ public class Player extends Entity{
 
     }
 
+    /**
+     * Loads the player's attack images based on their current weapon
+     */
     public void getPlayerAttackImage(){
 
         if (currentWeapon.type == typeSword){
@@ -129,6 +131,31 @@ public class Player extends Entity{
 
     }
 
+    /**
+     * Calculates the player's attack value based on their strength and weapon
+     * and updates the attack area based on the equipped weapon.
+     * @return The player's attack value
+     */
+    public int getAttack(){
+
+        attackArea = currentWeapon.attackArea;
+        return strength * currentWeapon.attackValue;
+
+    }
+
+    /**
+     * Calculates the player's defense value based on their dexterity and shield
+     * @return The player's defense value
+     */
+    public int getDefense(){
+
+        return dexterity * currentShield.defenseValue;
+
+    }
+
+    /**
+     * Updates the player's state, position, and interactions each frame.
+     */
     public void update(){
 
         if (attacking){
@@ -216,6 +243,13 @@ public class Player extends Entity{
             }
         }
 
+        /*
+         * Did the user hit the shoot key?
+         * Is there a fireball already on screen?
+         * Is shooting on cooldown?
+         * Does the player have enough mana to shoot?
+         * If yes to all of these then spawn a fireball projectile
+         */
         if (gp.keyHandler.shootKeyPressed && !projectile.alive && shotAvailable == 30 && projectile.hasResource(this)){
 
             projectile.set(worldX, worldY, direction, true, this);
@@ -239,6 +273,9 @@ public class Player extends Entity{
         }
     }
 
+    /**
+     * Handles the player's attacking state and collision detection during an attack.
+     */
     public void attacking(){
 
         spriteCounter++;

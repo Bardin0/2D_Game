@@ -1,5 +1,6 @@
 package entity;
 
+// Imports
 import main.GamePanel;
 import main.UtilityTool;
 import tile.InteractiveTile;
@@ -16,26 +17,31 @@ import java.util.Objects;
  */
 public class Entity {
 
+    // Entity world coordinates
     public int worldX, worldY;
 
+    // Entity action images
     public BufferedImage up1, up2, down1, down2, right1, right2, left1, left2;
     public BufferedImage attackUp1, attackUp2, attackDown1, attackDown2, attackLeft1, attackLeft2, attackRight1, attackRight2;
     public String direction = "down";
 
+    // Sprite animation control
     public int spriteCounter = 0;
     public int spriteNum = 1;
 
+    // Hitboxes
     public Rectangle solidArea = new Rectangle(0, 0, 48, 48);
     public Rectangle attackArea = new Rectangle(0,0,0,0);
     public boolean collisionOn = false;
-
     public int solidAreaDefaultX, solidAreaDefaultY;
 
     public int actionLockCounter = 0;
 
+    // Dialogue
     String[] dialogues = new String[20];
     int dialogueIndex = 0;
 
+    // Attributes for smaller sprites such as heart
     public BufferedImage image, image2, image3;
     public String name;
     public boolean collision = false;
@@ -43,6 +49,7 @@ public class Entity {
     public boolean attacking = false;
     public int invincibleCounter = 0;
 
+    // State trackers
     int dyingCounter = 0;
     private int swapTracker = 0;
     boolean hpBarOn = false;
@@ -65,6 +72,8 @@ public class Entity {
     public int mana;
     public int maxMana;
     public int ammo;
+
+    // Equipment
     public Entity currentWeapon;
     public Entity currentShield;
     public Projectile projectile;
@@ -77,6 +86,7 @@ public class Entity {
     public int useCost = 0;
     public int shotAvailable = 0;
 
+    // Entity Types
     public int type;
     public final int typePlayer = 0;
     public final int typeNPC = 1;
@@ -87,12 +97,10 @@ public class Entity {
     public final int typeConsumable = 6;
     public final int typePickupOnly = 7;
 
-
     GamePanel gp;
 
     /**
      * Constructs a new Entity object associated with a specific GamePanel.
-     *
      * @param gp The {@link GamePanel} instance to which this entity belongs.
      */
     public Entity(GamePanel gp){
@@ -101,20 +109,22 @@ public class Entity {
 
     }
 
+    // OVERRIDDEN METHODS START HERE
     /**
      * Handles the reaction when the entity takes damage.
      * This method is expected to be executed when the entity receives damage
      * and defines the entity's response such as visual, behavioral, or state changes
      * due to the damage received.
      */
-    // Overwritten methods
     public void damageReaction(){}
+
     /**
      * Performs an action when the given entity is used. The specific behavior depends
      * on the implementation of this method in subclasses or the context in which it is invoked.
      * @param entity The entity that is the target or context of the use action.
      */
     public void use(Entity entity){}
+
     /**
      * Defines the behavior or actions for this entity during the game loop.
      * The method determines and sets the current action or state of the entity
@@ -123,6 +133,7 @@ public class Entity {
      * the entity type and conditions.
      */
     public void setAction(){}
+
     /**
      * Handles the logic for determining if an item or object should be dropped
      * upon the event of a specific condition, such as the defeat of an entity.
@@ -132,6 +143,7 @@ public class Entity {
      * items are determined for dropping into the game world.
      */
     public void checkDrop(){}
+    // OVERRIDDEN METHODS END HERE
 
     /**
      * Loads an image from the given file path, scales it to the specified width and height,
