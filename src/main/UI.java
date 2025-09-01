@@ -27,6 +27,10 @@ public class UI {
     BufferedImage heartFull, heartHalf, heartBlank, crystalFull, crystalBlank;
 
 
+    /**
+     * Instantiates the UI font, and images
+     * @param gp The primary GamePanel element
+     */
     public UI(GamePanel gp){
         this.gp = gp;
         arial_40 = new Font("Arial", Font.PLAIN, 40);
@@ -50,6 +54,10 @@ public class UI {
         crystalBlank = crystal.image2;
     }
 
+    /**
+     * Draws the UI throughout the various game states
+     * @param g2 The primary Graphics2D object
+     */
     public void draw(Graphics2D g2){
         this.g2 = g2;
 
@@ -78,6 +86,9 @@ public class UI {
         }
     }
 
+    /**
+     * Draws the title screen
+     */
     public void drawTitleScreen(){
 
         g2.setColor(new Color(199, 137, 137));
@@ -136,6 +147,9 @@ public class UI {
 
     }
 
+    /**
+     * Draws the pause screen
+     */
     public void drawPauseScreen(){
 
         g2.setFont(g2.getFont().deriveFont(Font.PLAIN,80));
@@ -147,6 +161,9 @@ public class UI {
         g2.drawString(text,x,y);
     }
 
+    /**
+     * Draws the dialogue box and text
+     */
     public void drawDialogueScreen(){
 
         // Window
@@ -169,6 +186,9 @@ public class UI {
 
     }
 
+    /**
+     * Draws the primary dialogue box
+     */
     public void drawSubWindow(int x, int y, int width, int height){
 
         Color c = new Color(0,0,0,210);
@@ -181,17 +201,30 @@ public class UI {
         g2.drawRoundRect(x+5,y+5,width-10,height-10,25,25);
     }
 
+    /**
+     * Gets the X coordinates for text that will be centered
+     * @param text The text to be displayed
+     * @return The X coordinate for the text
+     */
     public int getXForCenterText(String text) {
-
         int length = (int)g2.getFontMetrics().getStringBounds(text,g2).getWidth();
         return gp.screenWidth/2 - length/2;
     }
 
+    /**
+     * Calculates the X values of text that will be aligned to the right
+     * @param text The text to be displayed on screen
+     * @param tailX end of the dialogue box
+     * @return The X coordinate where the text will be displayed
+     */
     public int getXForAlignToRightText(String text, int tailX){
         int length = (int)g2.getFontMetrics().getStringBounds(text,g2).getWidth();
         return tailX - length;
     }
 
+    /**
+     * Draws the players health bar, in the top left of the screen
+     */
     public void drawPlayerLife(){
 
         int x = gp.tileSize/2;
@@ -237,11 +270,11 @@ public class UI {
             i++;
             x += 35;
         }
-
-
-
     }
 
+    /**
+     * Draws the menu screen
+     */
     public void drawMenuScreen(){
 
         // Create a Frame
@@ -363,6 +396,10 @@ public class UI {
 
     }
 
+    /**
+     * Adds messages to be displayed
+     * @param text The message to be added
+     */
     public void addMessage(String text){
 
         message.add(text);
@@ -370,6 +407,9 @@ public class UI {
 
     }
 
+    /**
+     * Draws a message within the dialogue window
+     */
     public void drawMessage(){
 
         int messageX = gp.tileSize;
@@ -398,6 +438,9 @@ public class UI {
 
     }
 
+    /**
+     * Draws the inventory screen
+     */
     public void drawInventory(){
 
         int frameX = gp.tileSize*12;
@@ -464,6 +507,9 @@ public class UI {
 
     }
 
+    /**
+     * Gets the index of an item in the inventory relative to the inventory arraylist
+     */
     public int getItemInventoryIndex(){
 
         return slotCol + (slotRow * 5);

@@ -47,6 +47,11 @@ public class KeyHandler implements KeyListener {
         else if (gp.gameState == gp.menuState){
             menuState(code);
         }
+
+       else if (gp.gameState == gp.optionsState){
+           optionsState(code);
+        }
+
     }
 
     @Override
@@ -142,6 +147,9 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_C:
                 gp.gameState = gp.menuState;
                 break;
+            case KeyEvent.VK_ESCAPE:
+                gp.gameState = gp.optionsState;
+                break;
             case KeyEvent.VK_T:
                 checkDrawTime = !checkDrawTime;
                 break;
@@ -149,6 +157,10 @@ public class KeyHandler implements KeyListener {
 
     }
 
+    /**
+     * Handles key inputs when in the pause state
+     * @param code The key pressed
+     */
     public void pauseState(int code){
         if (code == KeyEvent.VK_ESCAPE){
             gp.gameState = gp.playState;
@@ -159,12 +171,20 @@ public class KeyHandler implements KeyListener {
         }
     }
 
+    /**
+     * Handles key inputs while in the dialogue state
+     * @param code The key pressed
+     */
     public void dialogueState(int code){
         if (code == KeyEvent.VK_ENTER){
             gp.gameState = gp.playState;
         }
     }
 
+    /**
+     * Handles key inputs in the menu state
+     * @param code The key pressed
+     */
     public void menuState(int code){
         if (code == KeyEvent.VK_C){
             gp.gameState = gp.playState;
@@ -200,6 +220,25 @@ public class KeyHandler implements KeyListener {
         if (code == KeyEvent.VK_ENTER){
             gp.player.selectItem();
         }
+    }
+
+    /**
+     * Handles key inputs in the options stage
+     * @param code The key pressed
+     */
+    public void optionsState(int code){
+
+        switch (code){
+
+            case KeyEvent.VK_ESCAPE:
+                gp.gameState = gp.playState;
+                break;
+            case KeyEvent.VK_ENTER:
+                enterPressed = true;
+                break;
+
+        }
+
     }
 
 }
