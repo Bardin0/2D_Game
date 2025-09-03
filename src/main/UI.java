@@ -26,6 +26,8 @@ public class UI {
 
     BufferedImage heartFull, heartHalf, heartBlank, crystalFull, crystalBlank;
 
+    int subState = 0;
+
 
     /**
      * Instantiates the UI font, and images
@@ -84,6 +86,11 @@ public class UI {
             drawMenuScreen();
             drawInventory();
         }
+        else if (gp.gameState == gp.optionsState){
+            drawOptionsScreen();
+        }
+
+
     }
 
     /**
@@ -513,6 +520,83 @@ public class UI {
     public int getItemInventoryIndex(){
 
         return slotCol + (slotRow * 5);
+
+    }
+
+    public void drawOptionsScreen(){
+        g2.setColor(Color.white);
+        g2.setFont(g2.getFont().deriveFont(32F));
+
+        // Sub window
+        int frameX = gp.tileSize*6;
+        int frameY = gp.tileSize;
+        int frameWidth = gp.tileSize*8;
+        int frameHeight = gp.tileSize*10;
+        drawSubWindow(frameX, frameY, frameWidth, frameHeight);
+
+        switch (subState){
+            case 0:
+                optionsTop(frameX, frameY);
+                break;
+            case 1:
+                break;
+            case 2:
+                break;
+        }
+    }
+
+    public void optionsTop(int frameX, int frameY) {
+
+        int textX;
+        int textY;
+        //Title
+        String text = "Options";
+        textX = getXForCenterText(text);
+        textY = frameY + gp.tileSize;
+        g2.drawString(text, textX, textY);
+
+        // Full Screen On/Off
+        textX = frameX + gp.tileSize;
+        textY += gp.tileSize*2;
+        g2.drawString("Full Screen", textX, textY);
+        if (commandNumber == 0){
+            g2.drawString(">", textX - 25, textY);
+        }
+
+        //Music
+        textY += gp.tileSize;
+        g2.drawString("Music", textX, textY);
+        if (commandNumber == 1){
+            g2.drawString(">", textX - 25, textY);
+        }
+
+        //SE
+        textY += gp.tileSize;
+        g2.drawString("SE", textX, textY);
+        if (commandNumber == 2){
+            g2.drawString(">", textX - 25, textY);
+        }
+
+        // Controls
+        textY += gp.tileSize;
+        g2.drawString("Controls", textX, textY);
+        if (commandNumber == 3){
+            g2.drawString(">", textX - 25, textY);
+        }
+
+        // Quit
+        textY += gp.tileSize;
+        g2.drawString("Quit", textX, textY);
+        if (commandNumber == 4){
+            g2.drawString(">", textX - 25, textY);
+        }
+
+        textY += gp.tileSize * 4;
+        g2.drawString("Back", textX, textY);
+        if (commandNumber == 5){
+            g2.drawString(">", textX - 25, textY);
+        }
+
 
     }
 

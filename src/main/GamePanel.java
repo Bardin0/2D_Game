@@ -210,6 +210,10 @@ public class GamePanel extends JPanel implements Runnable{
         }
     }
 
+    /**
+     * Draws everything to a temporary screen before it is drawn to the actual screen
+     * This is done to prevent flickering
+     */
     public void drawTempScreen(){
 
         //Debug
@@ -335,8 +339,8 @@ public class GamePanel extends JPanel implements Runnable{
      * Plays sound effect
      * @param i The index of the sound effect to play
      */
-    public void playSE(int i){
-        SE.setFile(i);
+    public void playSE(Sound.SoundType soundType){
+        SE.setFile(soundType);
         SE.play();
     }
 

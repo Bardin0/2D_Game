@@ -8,6 +8,28 @@ import java.net.URL;
 public class Sound {
 
     Clip clip;
+    public enum SoundType{
+        MUSIC(0),
+        COIN(1),
+        POWERUP(2),
+        UNLOCK(3),
+        FANFARE(4),
+        HITMONSTER(5),
+        SWING_SWORD(6),
+        RECEIVE_DAMAGE(7),
+        LEVEL_UP(8),
+        CURSOR(9),
+        BURNING(10),
+        CUT_TREE(11);
+
+        private final int value;
+        SoundType(int value) {
+            this.value = value;
+        }
+        public int getValue() {
+            return value;
+        }
+    }
 
     URL[] soundURL = new URL[30];
 
@@ -30,10 +52,11 @@ public class Sound {
 
     /**
      * Loads an audio file to be played
-     * @param i The index of the sound file in the soundURL array
+     * @param soundType The Sound to be played
      */
-    public void setFile(int i){
+    public void setFile(SoundType soundType){
 
+        int i = soundType.getValue();
         try{
             AudioInputStream ais = AudioSystem.getAudioInputStream(soundURL[i]);
             clip = AudioSystem.getClip();

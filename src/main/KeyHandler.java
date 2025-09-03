@@ -14,11 +14,21 @@ public class KeyHandler implements KeyListener {
         this.gp=gp;
     }
 
+    /**
+     * Invoked when a key has been typed.
+     * Not used but must be implemented as part of KeyListener interface.
+     * @param e the event to be processed
+     */
     @Override
     public void keyTyped(KeyEvent e) {
 
     }
 
+    /**
+     * Invoked when a key has been pressed.
+     * Sends the key code to the appropriate game state handler.
+     * @param e the event to be processed
+     */
     @Override
     public void keyPressed(KeyEvent e) {
 
@@ -54,6 +64,11 @@ public class KeyHandler implements KeyListener {
 
     }
 
+    /**
+     * Invoked when a key has been released.
+     * Updates the state of movement and action keys to false.
+     * @param e the event to be processed
+     */
     @Override
     public void keyReleased(KeyEvent e) {
         int code = e.getKeyCode();
@@ -162,7 +177,7 @@ public class KeyHandler implements KeyListener {
      * @param code The key pressed
      */
     public void pauseState(int code){
-        if (code == KeyEvent.VK_ESCAPE){
+        if (code == KeyEvent.VK_P){
             gp.gameState = gp.playState;
             gp.playMusic(0);
         }
@@ -193,28 +208,28 @@ public class KeyHandler implements KeyListener {
         if (code == KeyEvent.VK_W){
             if (gp.ui.slotRow != 0){
                 gp.ui.slotRow--;
-                gp.playSE(9);
+                gp.playSE(Sound.SoundType.CURSOR);
             }
 
         }
         if (code == KeyEvent.VK_A){
             if (gp.ui.slotCol != 0){
                 gp.ui.slotCol--;
-                gp.playSE(9);
+                gp.playSE(Sound.SoundType.CURSOR);
             }
 
         }
         if (code == KeyEvent.VK_S){
             if (gp.ui.slotRow != 3){
                 gp.ui.slotRow++;
-                gp.playSE(9);
+                gp.playSE(Sound.SoundType.CURSOR);
             }
 
         }
         if (code == KeyEvent.VK_D){
             if (gp.ui.slotCol != 4){
                 gp.ui.slotCol++;
-                gp.playSE(9);
+                gp.playSE(Sound.SoundType.CURSOR);
             }
         }
         if (code == KeyEvent.VK_ENTER){
@@ -237,6 +252,20 @@ public class KeyHandler implements KeyListener {
                 enterPressed = true;
                 break;
 
+            case KeyEvent.VK_W:
+                gp.ui.commandNumber--;
+                if (gp.ui.commandNumber < 0){
+                    gp.ui.commandNumber = 5;
+                }
+                gp.playSE(Sound.SoundType.CURSOR);
+                break;
+            case KeyEvent.VK_S:
+                gp.ui.commandNumber++;
+                if (gp.ui.commandNumber > 5){
+                    gp.ui.commandNumber = 0;
+                }
+                gp.playSE(Sound.SoundType.CURSOR);
+                break;
         }
 
     }
