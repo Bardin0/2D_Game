@@ -2,6 +2,7 @@ package entity;
 
 // Imports
 import main.GamePanel;
+import main.Sound;
 import main.UtilityTool;
 import tile.InteractiveTile;
 
@@ -409,7 +410,7 @@ public class Entity {
      * @param attack The attack value inflicted on the player.
      */
     public void damagePlayer(int attack){
-        gp.playSE(7);
+        gp.playSE(Sound.SoundType.RECEIVE_DAMAGE);
 
         int damage = attack - gp.player.defense;
 

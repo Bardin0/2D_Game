@@ -19,7 +19,7 @@ public class Sound {
         RECEIVE_DAMAGE(7),
         LEVEL_UP(8),
         CURSOR(9),
-        BURNING(10),
+        FIREBALL(10),
         CUT_TREE(11);
 
         private final int value;

@@ -2,6 +2,7 @@ package entity;
 
 import main.KeyHandler;
 import main.GamePanel;
+import main.Sound;
 import object.OBJ_Fireball;
 import object.OBJ_Key;
 import object.OBJ_ShieldNormal;
@@ -216,7 +217,7 @@ public class Player extends Entity{
             }
 
             if (keyH.enterPressed && !attackCanceled){
-                gp.playSE(6);
+                gp.playSE(Sound.SoundType.SWING_SWORD);
                 attacking = true;
                 spriteCounter = 0;
             }
@@ -256,7 +257,7 @@ public class Player extends Entity{
             projectile.subtractResource(this);
 
             gp.projectileList.add(projectile);
-            gp.playSE(10); // Play fireball sound
+            gp.playSE(Sound.SoundType.FIREBALL);
             shotAvailable = 0;
         }
 
@@ -343,7 +344,7 @@ public class Player extends Entity{
                 if (inventory.size() != maxInventorySpace){
 
                     inventory.add(gp.obj[i]);
-                    gp.playSE(1);
+                    gp.playSE(Sound.SoundType.COIN);
                     text = "Picked up " + gp.obj[i].name;
 
                 }
@@ -457,7 +458,7 @@ public class Player extends Entity{
 
         if (i != 999){
             if (!invincible){
-                gp.playSE(7);
+                gp.playSE(Sound.SoundType.RECEIVE_DAMAGE);
 
                 int damage = gp.monster[i].attack - defense;
                 if (damage < 0){
@@ -476,7 +477,7 @@ public class Player extends Entity{
         if (i != 999) {
 
             if (!gp.monster[i].invincible){
-                gp.playSE(5);
+                gp.playSE(Sound.SoundType.HITMONSTER);
 
                 int damage = attack - gp.monster[i].defense;
                 if (damage < 0){
@@ -509,7 +510,7 @@ public class Player extends Entity{
             dexterity++;
             attack = getAttack();
             defense = getDefense();
-            gp.playSE(8);
+            gp.playSE(Sound.SoundType.LEVEL_UP);
 
             gp.gameState = gp.dialogueState;
             gp.ui.currentDialogue = "You Leveled Up!";

@@ -2,6 +2,7 @@ package object;
 
 import entity.Entity;
 import main.GamePanel;
+import main.Sound;
 
 public class OBJ_RedPotion extends Entity {
 
@@ -27,7 +28,7 @@ public class OBJ_RedPotion extends Entity {
             gp.player.life = gp.player.maxLife;
         }
 
-        gp.playSE(2);
+        gp.playSE(Sound.SoundType.POWERUP);
 
     }
 

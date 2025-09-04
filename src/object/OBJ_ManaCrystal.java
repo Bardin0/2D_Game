@@ -2,6 +2,7 @@ package object;
 
 import entity.Entity;
 import main.GamePanel;
+import main.Sound;
 
 public class OBJ_ManaCrystal extends Entity {
 
@@ -22,7 +23,7 @@ public class OBJ_ManaCrystal extends Entity {
 
     public void use (Entity entity){
 
-        gp.playSE(2);
+        gp.playSE(Sound.SoundType.POWERUP);
         gp.ui.addMessage("+" + value + " Mana");
         entity.mana += value;
 

@@ -2,6 +2,7 @@ package interactive_tiles;
 
 import main.GamePanel;
 import entity.Entity;
+import main.Sound;
 import tile.InteractiveTile;
 
 import java.awt.*;
@@ -29,7 +30,7 @@ public class IT_DryTree extends InteractiveTile {
     }
 
     public void playSE(){
-        gp.playSE(11);
+        gp.playSE(Sound.SoundType.CUT_TREE);
     }
 
     public InteractiveTile getDestroyedForm(){

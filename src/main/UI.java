@@ -591,7 +591,7 @@ public class UI {
             g2.drawString(">", textX - 25, textY);
         }
 
-        textY += gp.tileSize * 4;
+        textY += gp.tileSize * 2;
         g2.drawString("Back", textX, textY);
         if (commandNumber == 5){
             g2.drawString(">", textX - 25, textY);

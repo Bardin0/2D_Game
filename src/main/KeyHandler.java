@@ -118,7 +118,7 @@ public class KeyHandler implements KeyListener {
             // Start Game
             if (gp.ui.commandNumber == 0){
                 gp.gameState = gp.playState;
-                gp.playMusic(0);
+                gp.playMusic(Sound.SoundType.MUSIC);
             }
             // Load game
             else if (gp.ui.commandNumber == 1){
@@ -179,7 +179,7 @@ public class KeyHandler implements KeyListener {
     public void pauseState(int code){
         if (code == KeyEvent.VK_P){
             gp.gameState = gp.playState;
-            gp.playMusic(0);
+            gp.playMusic(Sound.SoundType.MUSIC);
         }
         if (code == KeyEvent.VK_ENTER){
             System.exit(0);

@@ -322,7 +322,7 @@ public class GamePanel extends JPanel implements Runnable{
      * Begins playing music
      * @param i The index of the music to play
      */
-    public void playMusic(int i){
+    public void playMusic(Sound.SoundType i){
         music.setFile(i);
         music.play();
         music.loop();
