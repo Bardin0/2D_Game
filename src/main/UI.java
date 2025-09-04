@@ -543,6 +543,8 @@ public class UI {
             case 2:
                 break;
         }
+
+        gp.keyHandler.enterPressed = false;
     }
 
     public void optionsTop(int frameX, int frameY) {
@@ -561,6 +563,10 @@ public class UI {
         g2.drawString("Full Screen", textX, textY);
         if (commandNumber == 0){
             g2.drawString(">", textX - 25, textY);
+            if (gp.keyHandler.enterPressed){
+                gp.fullScreenOn = !gp.fullScreenOn;
+                gp.setFullScreen();
+            }
         }
 
         //Music
@@ -591,11 +597,29 @@ public class UI {
             g2.drawString(">", textX - 25, textY);
         }
 
+        // Back
         textY += gp.tileSize * 2;
         g2.drawString("Back", textX, textY);
         if (commandNumber == 5){
             g2.drawString(">", textX - 25, textY);
         }
+
+        // Full screen check box
+        textX = frameX + (int)(gp.tileSize * 4.5);
+        textY = frameY + gp.tileSize*2 + (int)(gp.tileSize/2);
+        g2.setStroke(new BasicStroke(3));
+        g2.drawRect(textX, textY, (int)(gp.tileSize/2), (int)(gp.tileSize/2));
+        if (gp.fullScreenOn){
+            g2.fillRect(textX, textY, (int)(gp.tileSize/2), (int)(gp.tileSize/2));
+        }
+
+        // Music Volume
+        textY += gp.tileSize;
+        g2.drawRect(textX, textY, gp.tileSize*3, (int)(gp.tileSize/2));
+
+        // SE Volume
+        textY += gp.tileSize;
+        g2.drawRect(textX, textY, gp.tileSize*3, (int)(gp.tileSize/2));
 
 
     }
