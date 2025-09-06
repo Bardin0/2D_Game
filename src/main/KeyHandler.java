@@ -243,6 +243,12 @@ public class KeyHandler implements KeyListener {
      */
     public void optionsState(int code){
 
+        int maxCommandNumber = switch (gp.ui.subState) {
+            case UI.OPTIONS_MAIN -> 5;
+            case UI.OPTIONS_QUIT -> 1;
+            default -> 0;
+        };
+
         switch (code){
 
             case KeyEvent.VK_ESCAPE:
@@ -255,17 +261,53 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_W:
                 gp.ui.commandNumber--;
                 if (gp.ui.commandNumber < 0){
-                    gp.ui.commandNumber = 5;
+                    gp.ui.commandNumber = maxCommandNumber;
                 }
                 gp.playSE(Sound.SoundType.CURSOR);
                 break;
+
             case KeyEvent.VK_S:
                 gp.ui.commandNumber++;
-                if (gp.ui.commandNumber > 5){
+                if (gp.ui.commandNumber > maxCommandNumber){
                     gp.ui.commandNumber = 0;
                 }
                 gp.playSE(Sound.SoundType.CURSOR);
                 break;
+
+            case KeyEvent.VK_A:
+                // Check if we are in the options main screen
+                if (gp.ui.subState == UI.OPTIONS_MAIN){
+                    // Check if the music volume can be lowered
+                    if (gp.ui.commandNumber == gp.ui.COMMAND_MUSIC && gp.music.volumeScale > 0){
+                        gp.music.volumeScale--;
+                        gp.music.setVolume();
+                        gp.playSE(Sound.SoundType.CURSOR);
+                    }
+
+                    // Check if the sound effects volume can be lowered
+                    if (gp.ui.commandNumber == gp.ui.COMMAND_SE && gp.SE.volumeScale > 0){
+                        gp.SE.volumeScale--;
+                        gp.playSE(Sound.SoundType.CURSOR);
+                    }
+                }
+                break;
+
+            case KeyEvent.VK_D:
+                // Check if we are in the options main screen
+                if (gp.ui.subState == UI.OPTIONS_MAIN){
+                    // Check if the music volume can be increased
+                    if (gp.ui.commandNumber == 1 && gp.music.volumeScale < 5){
+                        gp.music.volumeScale++;
+                        gp.music.setVolume();
+                        gp.playSE(Sound.SoundType.CURSOR);
+                    }
+
+                    // Check if the sound effect volume can be increased
+                    if (gp.ui.commandNumber == gp.ui.COMMAND_SE && gp.SE.volumeScale < 5){
+                        gp.SE.volumeScale++;
+                        gp.playSE(Sound.SoundType.CURSOR);
+                    }
+                }
         }
 
     }

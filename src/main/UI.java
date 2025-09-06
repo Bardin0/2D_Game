@@ -16,17 +16,35 @@ public class UI {
     GamePanel gp;
     Graphics2D g2;
     Font arial_40, arial_80B, customFont;
+
+    // Messages
     ArrayList<String> message = new ArrayList<>();
     ArrayList<Integer> messageCounter = new ArrayList<>();
     public String currentDialogue = "";
+
     public int commandNumber = 0;
+
+    //Command Number Constants
+    public final int COMMAND_FULLSCREEN = 0;
+    public final int COMMAND_MUSIC = 1;
+    public final int COMMAND_SE = 2;
+    public final int COMMAND_CONTROLS = 3;
+    public final int COMMAND_QUIT = 4;
+    public final int COMMAND_BACK = 5;
+
+    int subState = 0;
+
+    // Substate constants
+    public static final int OPTIONS_MAIN = 0;
+    public static final int OPTIONS_FULL_SCREEN_NOTIFICATION = 1;
+    public static final int OPTIONS_CONTROLS = 2;
+    public static final int OPTIONS_QUIT = 3;
 
     public int slotCol = 0;
     public int slotRow = 0;
 
     BufferedImage heartFull, heartHalf, heartBlank, crystalFull, crystalBlank;
 
-    int subState = 0;
 
 
     /**
@@ -439,6 +457,7 @@ public class UI {
                 if (messageCounter.get(i) > 180){
                     message.remove(i);
                     messageCounter.remove(i);
+                    i--; // Adjust index if list size changes
                 }
             }
         }
@@ -523,6 +542,9 @@ public class UI {
 
     }
 
+    /*
+     * Draws the options screen
+     */
     public void drawOptionsScreen(){
         g2.setColor(Color.white);
         g2.setFont(g2.getFont().deriveFont(32F));
@@ -535,20 +557,29 @@ public class UI {
         drawSubWindow(frameX, frameY, frameWidth, frameHeight);
 
         switch (subState){
-            case 0:
-                optionsTop(frameX, frameY);
+            case OPTIONS_MAIN:
+                optionsMain(frameX, frameY);
                 break;
-            case 1:
+            case OPTIONS_FULL_SCREEN_NOTIFICATION:
                 optionsFullScreenNotification(frameX, frameY);
                 break;
-            case 2:
+            case OPTIONS_CONTROLS:
+                optionsControls(frameX, frameY);
+                break;
+            case OPTIONS_QUIT:
+                optionsQuit(frameX, frameY);
                 break;
         }
 
         gp.keyHandler.enterPressed = false;
     }
 
-    public void optionsTop(int frameX, int frameY) {
+    /**
+     * Draws the primary view of the options menu
+     * @param frameX The X coordinate of the options frame
+     * @param frameY The Y coordinate of the options frame
+     */
+    public void optionsMain(int frameX, int frameY) {
 
         int textX;
         int textY;
@@ -567,43 +598,54 @@ public class UI {
             if (gp.keyHandler.enterPressed) {
                 gp.fullScreenOn = !gp.fullScreenOn;
                 gp.setFullScreen();
-                subState = 1;
+                subState = OPTIONS_FULL_SCREEN_NOTIFICATION;
             }
         }
 
         //Music
         textY += gp.tileSize;
         g2.drawString("Music", textX, textY);
-        if (commandNumber == 1){
+        if (commandNumber == COMMAND_MUSIC){
             g2.drawString(">", textX - 25, textY);
         }
 
         //SE
         textY += gp.tileSize;
         g2.drawString("SE", textX, textY);
-        if (commandNumber == 2){
+        if (commandNumber == COMMAND_SE){
             g2.drawString(">", textX - 25, textY);
         }
 
         // Controls
         textY += gp.tileSize;
         g2.drawString("Controls", textX, textY);
-        if (commandNumber == 3){
+        if (commandNumber == COMMAND_CONTROLS){
             g2.drawString(">", textX - 25, textY);
+            if (gp.keyHandler.enterPressed) {
+                commandNumber = 0;
+                subState = OPTIONS_CONTROLS;
+            }
         }
 
         // Quit
         textY += gp.tileSize;
         g2.drawString("Quit", textX, textY);
-        if (commandNumber == 4){
+        if (commandNumber == COMMAND_QUIT){
             g2.drawString(">", textX - 25, textY);
+            if (gp.keyHandler.enterPressed) {
+                commandNumber = 0;
+                subState = OPTIONS_QUIT;
+            }
         }
 
         // Back
         textY += gp.tileSize * 2;
         g2.drawString("Back", textX, textY);
-        if (commandNumber == 5){
+        if (commandNumber == COMMAND_BACK){
             g2.drawString(">", textX - 25, textY);
+            if (gp.keyHandler.enterPressed) {
+                gp.gameState = gp.playState;
+            }
         }
 
         // Full screen check box
@@ -617,17 +659,23 @@ public class UI {
 
         // Music Volume
         textY += gp.tileSize;
-        g2.drawRect(textX, textY, gp.tileSize*3, (int)(gp.tileSize/2));
+        g2.drawRect(textX, textY, (int)(gp.tileSize*2.5), (int)(gp.tileSize/2)); // 124/24
+        int volumeWidth = (int)((gp.tileSize*2.5)/5) * gp.music.volumeScale;
+        g2.fillRect(textX, textY, volumeWidth, (int)(gp.tileSize/2));
+
 
         // SE Volume
         textY += gp.tileSize;
-        g2.drawRect(textX, textY, gp.tileSize*3, (int)(gp.tileSize/2));
+        g2.drawRect(textX, textY, (int)(gp.tileSize*2.5), (int)(gp.tileSize/2)); // 124/24
+        int seWidth = (int)((gp.tileSize*2.5)/5) * gp.SE.volumeScale;
+        g2.fillRect(textX, textY, seWidth, (int)(gp.tileSize/2));
 
 
     }
 
     /**
-     * Draws the notification that full screen changes will take effect after restarting the game
+     * A substate of the options menu that draws the notification
+     * that full screen changes will take effect after restarting the game
      * @param frameX The X coordinate of the options frame
      * @param frameY The Y coordinate of the options frame
      */
@@ -644,7 +692,7 @@ public class UI {
         }
 
         // Back
-        textY = frameY + gp.tileSize * 4;
+        textY = frameY + gp.tileSize * 9;
         g2.drawString("Back", textX, textY);
         if (commandNumber == 0){
             g2.drawString(">", textX - 25, textY);
@@ -653,6 +701,102 @@ public class UI {
                 commandNumber = 0;
             }
         }
+
+    }
+
+    /**
+     * A substate of the options menu that displays
+     * the controls for the game
+     * @param frameX The X coordinate of the options frame
+     * @param frameY The Y coordinate of the options frame
+     */
+    public void optionsControls(int frameX, int frameY){
+
+        commandNumber = 0;
+        int textX;
+        int textY;
+
+        String text = "Controls";
+        textX = getXForCenterText(text);
+        textY = frameY + gp.tileSize;
+        g2.drawString(text, textX, textY);
+
+        textX = frameX + gp.tileSize;
+        textY += gp.tileSize;
+        int keyTextX = frameX + gp.tileSize * 6;
+
+        String[][] options = {
+            {"Move", "WASD"},
+            {"Interact/Attack", "Enter"},
+            {"Shoot/Cast", "F"},
+            {"Character Screen", "C"},
+            {"Pause", "P"},
+            {"Options", "ESC"}
+        };
+        for (String[] optionArr : options){
+            g2.drawString(optionArr[0], textX, textY);
+            g2.drawString(optionArr[1], keyTextX, textY);
+            textY += gp.tileSize;
+        }
+
+        textY += gp.tileSize;
+
+        g2.drawString("Back", textX, textY);
+        if (commandNumber == 0){
+            g2.drawString(">", textX - 25, textY);
+            if (gp.keyHandler.enterPressed) {
+                subState = OPTIONS_MAIN;
+            }
+        }
+
+
+    }
+
+    /**
+     * A substate of the options menu that displays
+     * a quit confirmation dialogue
+     * @param frameX The X coordinate of the options frame
+     * @param frameY The Y coordinate of the options frame
+     */
+    public void optionsQuit(int frameX, int frameY){
+
+        int COMMAND_QUIT_YES = 0;
+        int COMMAND_QUIT_NO = 1;
+        int textX = frameX + gp.tileSize;
+        int textY = frameY + gp.tileSize*3;
+        String text = "Quit the game and return \nto the title screen?";
+
+        for (String line : text.split("\n")){
+            g2.drawString(line, textX, textY);
+            textY += gp.tileSize;
+        }
+
+        // YES
+        text = "Yes";
+        textX = getXForCenterText(text);
+        textY += gp.tileSize * 2;
+        g2.drawString(text, textX, textY);
+        if (commandNumber == COMMAND_QUIT_YES){
+            g2.drawString(">", textX - 25, textY);
+            if (gp.keyHandler.enterPressed) {
+                subState = OPTIONS_MAIN;
+                gp.gameState = gp.titleState;
+                gp.stopMusic();
+            }
+        }
+
+        text = "No";
+        textX = getXForCenterText(text);
+        textY += gp.tileSize;
+        g2.drawString(text, textX, textY);
+        if (commandNumber == COMMAND_QUIT_NO){
+            g2.drawString(">", textX - 25, textY);
+            if (gp.keyHandler.enterPressed) {
+                subState = OPTIONS_MAIN;
+                commandNumber = COMMAND_QUIT;
+            }
+        }
+
 
     }
 }
