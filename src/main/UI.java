@@ -539,6 +539,7 @@ public class UI {
                 optionsTop(frameX, frameY);
                 break;
             case 1:
+                optionsFullScreenNotification(frameX, frameY);
                 break;
             case 2:
                 break;
@@ -563,9 +564,10 @@ public class UI {
         g2.drawString("Full Screen", textX, textY);
         if (commandNumber == 0){
             g2.drawString(">", textX - 25, textY);
-            if (gp.keyHandler.enterPressed){
+            if (gp.keyHandler.enterPressed) {
                 gp.fullScreenOn = !gp.fullScreenOn;
                 gp.setFullScreen();
+                subState = 1;
             }
         }
 
@@ -624,4 +626,33 @@ public class UI {
 
     }
 
+    /**
+     * Draws the notification that full screen changes will take effect after restarting the game
+     * @param frameX The X coordinate of the options frame
+     * @param frameY The Y coordinate of the options frame
+     */
+    public void optionsFullScreenNotification(int frameX, int frameY){
+
+        int textX = frameX + gp.tileSize;
+        int textY = frameY + gp.tileSize*3;
+
+        String text = "The change will take effect \nafter restarting";
+
+        for (String line : text.split("\n")){
+            g2.drawString(line, textX, textY);
+            textY += 40;
+        }
+
+        // Back
+        textY = frameY + gp.tileSize * 4;
+        g2.drawString("Back", textX, textY);
+        if (commandNumber == 0){
+            g2.drawString(">", textX - 25, textY);
+            if (gp.keyHandler.enterPressed) {
+                subState = 0;
+                commandNumber = 0;
+            }
+        }
+
+    }
 }
