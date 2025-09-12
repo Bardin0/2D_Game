@@ -253,6 +253,7 @@ public class KeyHandler implements KeyListener {
 
             case KeyEvent.VK_ESCAPE:
                 gp.gameState = gp.playState;
+                gp.config.saveConfig();
                 break;
             case KeyEvent.VK_ENTER:
                 enterPressed = true;

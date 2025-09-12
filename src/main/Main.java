@@ -11,10 +11,15 @@ public class Main {
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setResizable(false);
         window.setTitle("Unc's Journey");
-        window.setUndecorated(true);
 
         GamePanel gamepanel = new GamePanel();
         window.add(gamepanel);
+
+        gamepanel.config.loadConfig();
+        if (gamepanel.fullScreenOn) {
+            window.setUndecorated(true);
+        }
+
         window.pack();
 
         window.setLocationRelativeTo(null);

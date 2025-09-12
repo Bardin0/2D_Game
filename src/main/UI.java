@@ -645,6 +645,7 @@ public class UI {
             g2.drawString(">", textX - 25, textY);
             if (gp.keyHandler.enterPressed) {
                 gp.gameState = gp.playState;
+                gp.config.saveConfig();
             }
         }
 
@@ -669,8 +670,6 @@ public class UI {
         g2.drawRect(textX, textY, (int)(gp.tileSize*2.5), (int)(gp.tileSize/2)); // 124/24
         int seWidth = (int)((gp.tileSize*2.5)/5) * gp.SE.volumeScale;
         g2.fillRect(textX, textY, seWidth, (int)(gp.tileSize/2));
-
-
     }
 
     /**
