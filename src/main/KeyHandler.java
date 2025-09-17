@@ -3,6 +3,8 @@ package main;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import main.Sound.SoundType;
+
 public class KeyHandler implements KeyListener {
 
     GamePanel gp;
@@ -61,7 +63,9 @@ public class KeyHandler implements KeyListener {
        else if (gp.gameState == gp.optionsState){
            optionsState(code);
         }
-
+        else if (gp.gameState == gp.gameOverState){
+            gameOverState(code);
+        }
     }
 
     /**
@@ -313,4 +317,27 @@ public class KeyHandler implements KeyListener {
 
     }
 
+    public void gameOverState(int code){
+
+        if (code == KeyEvent.VK_W){
+            gp.ui.commandNumber--;
+            gp.playSE(Sound.SoundType.CURSOR);
+            if (gp.ui.commandNumber < 0){
+                gp.ui.commandNumber = 1; 
+            }
+        }
+
+        if (code == KeyEvent.VK_S){
+            gp.ui.commandNumber++;
+            if (gp.ui.commandNumber > 1){
+                gp.ui.commandNumber = 0;
+            }
+        }
+
+    }
+        
 }
+
+
+
+
