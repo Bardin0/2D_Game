@@ -1,5 +1,7 @@
 package main;
 
+import entity.Entity;
+
 public class EventHandler {
 
     GamePanel gp;
@@ -64,6 +66,8 @@ public class EventHandler {
                 teleport(1, 12, 13);
             } else if (hit(1, 12, 13, "any")) {
                 teleport(0, 10, 39);
+            }else if (hit(1, 12, 9, "up")) {
+                speak(gp.npc[1][0]);
             }
         }
     }
@@ -118,6 +122,12 @@ public class EventHandler {
 
     }
 
+    /**
+     * Teleports the player to a different map and location
+     * @param map the map number to teleport to
+     * @param col the column to teleport to
+     * @param row the row to teleport to
+     */
     public void teleport(int map, int col, int row){
 
         gp.gameState = gp.transitionState;
@@ -126,6 +136,14 @@ public class EventHandler {
         tempRow = row;
         canTouchEvent = false;
         gp.playSE(Sound.SoundType.STAIRS);
+    }
+
+    public void speak (Entity entity) {
+        if (gp.keyHandler.enterPressed) {
+            gp.gameState = gp.dialogueState;
+            gp.player.attackCanceled = true;
+            entity.speak();
+        }
     }
 
 }

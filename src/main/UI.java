@@ -11,6 +11,12 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Objects;
 
+/**
+ * This class handles all UI elements of the game, including
+ * the title screen, player life, pause screen, dialogue screen,
+ * menu screen, inventory screen, options screen, game over screen,
+ * and transition effects.
+ */
 public class UI {
 
     GamePanel gp;
@@ -33,7 +39,6 @@ public class UI {
     public final int COMMAND_BACK = 5;
 
     int subState = 0;
-    int fadeoutCounter = 0;
     int fadeinCounter = 0;
 
     // Substate constants
@@ -46,7 +51,7 @@ public class UI {
     public int slotRow = 0;
 
     BufferedImage heartFull, heartHalf, heartBlank, crystalFull, crystalBlank;
-
+    public Entity npc;
 
 
     /**
@@ -114,6 +119,9 @@ public class UI {
         }
         else if (gp.gameState == gp.transitionState){
             drawTransition();
+        }
+        else if (gp.gameState == gp.tradeState){
+            drawTradeState();
         }
 
 
@@ -202,7 +210,7 @@ public class UI {
         // Window
         int x = gp.tileSize*2;
         int y = gp.tileSize/2;
-        int width = gp.screenWidth - (gp.tileSize*4);
+        int width = gp.screenWidth - (gp.tileSize*5);
         int height = gp.tileSize*4;
 
         drawSubWindow(x,y,width,height);
@@ -867,7 +875,30 @@ public class UI {
             gp.eventH.previousEventX = gp.player.worldX;
             gp.eventH.previousEventY = gp.player.worldY;
         }
+    }
 
+    public void drawTradeState(){
+
+        switch(subState){
+            case 0: tradeSelect(); break;
+            case 1: tradeBuy(); break;
+            case 2: tradeSell(); break;
+        }
+        gp.keyHandler.enterPressed = false;
+    }
+
+    public void tradeSelect() {
+        // Continue here at 16:30, Trade System
+        //Draw Window
+        int x = gp.tileSize * 15;
+        int y = gp.tileSize * 15;
+    }
+
+    public void tradeBuy() {
+
+    }
+
+    public void tradeSell() {
 
     }
 

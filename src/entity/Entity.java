@@ -10,6 +10,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Objects;
 
 /**
@@ -97,6 +98,12 @@ public class Entity {
     public final int typeShield = 5;
     public final int typeConsumable = 6;
     public final int typePickupOnly = 7;
+
+    public ArrayList<Entity> inventory = new ArrayList<>();
+    public final int maxInventorySpace = 20;
+
+    public boolean onShrooms = false;
+    public long shroomDuration = 0;
 
     GamePanel gp;
 
@@ -312,7 +319,7 @@ public class Entity {
         }
 
         spriteCounter ++;
-        if (spriteCounter > 12){
+        if (spriteCounter > 24){
             if (spriteNum == 1){
                 spriteNum = 2;
             }else if (spriteNum == 2){

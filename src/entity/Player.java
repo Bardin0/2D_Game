@@ -3,10 +3,7 @@ package entity;
 import main.KeyHandler;
 import main.GamePanel;
 import main.Sound;
-import object.OBJ_Fireball;
-import object.OBJ_Key;
-import object.OBJ_ShieldNormal;
-import object.OBJ_SwordNormal;
+import object.*;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -21,9 +18,6 @@ public class Player extends Entity{
     public final int screenY;
 
     public boolean attackCanceled = false;
-
-    public ArrayList<Entity> inventory = new ArrayList<>();
-    public final int maxInventorySpace = 20;
 
     public Player(GamePanel gp, KeyHandler keyH){
 
@@ -158,6 +152,16 @@ public class Player extends Entity{
      */
     public void update(){
 
+        if (onShrooms && shroomDuration > 0){
+            // Check if 60 seconds have passed
+            if (System.currentTimeMillis() - shroomDuration > 60000){
+                speed -=3;
+                onShrooms = false;
+                gp.ui.addMessage("You feel normal again.");
+                shroomDuration = 0;
+            }
+        }
+
         if (attacking){
             attacking();
         }
@@ -244,6 +248,7 @@ public class Player extends Entity{
 
             if (life <= 0){
                 gp.playSE(Sound.SoundType.GAME_OVER);
+                onShrooms = false;
                 gp.ui.commandNumber = -1; // Prevents spamming enter from instantly retrying.
                 gp.stopMusic();
                 gp.gameState = gp.gameOverState;

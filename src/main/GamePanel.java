@@ -72,6 +72,8 @@ public class GamePanel extends JPanel implements Runnable{
     public final int transitionState = 7;
     public final int tradeState = 8;
 
+    // Color
+    public final Color shrooms = new Color(84, 213, 98, 100);
 
     // Options
     public boolean fullScreenOn = false;
@@ -336,6 +338,11 @@ public class GamePanel extends JPanel implements Runnable{
 
             // UI
             ui.draw(g2);
+
+            if (player.onShrooms){
+                g2.setColor(shrooms);
+                g2.fillRect(0,0,fullScreenWidth,fullScreenHeight);
+            }
 
             // Debug
             if (keyHandler.checkDrawTime) {
