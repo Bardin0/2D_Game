@@ -21,7 +21,8 @@ public class Sound {
         LEVEL_UP(8),
         CURSOR(9),
         FIREBALL(10),
-        CUT_TREE(11);
+        CUT_TREE(11),
+        GAME_OVER(12);
 
         private final int value;
         SoundType(int value) {
@@ -51,6 +52,7 @@ public class Sound {
         soundURL[9] = getClass().getClassLoader().getResource("sound/cursor.wav");
         soundURL[10] = getClass().getClassLoader().getResource("sound/burning.wav");
         soundURL[11] = getClass().getClassLoader().getResource("sound/cuttree.wav");
+        soundURL[12] = getClass().getClassLoader().getResource("sound/gameover.wav");
 
     }
 
