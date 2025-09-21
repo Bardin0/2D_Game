@@ -82,6 +82,7 @@ public class Player extends Entity{
      */
     public void setItems(){
 
+        inventory.clear();
         inventory.add(currentWeapon);
         inventory.add(currentShield);
         inventory.add(new OBJ_Key(gp));
@@ -244,7 +245,9 @@ public class Player extends Entity{
             }
 
             if (life <= 0){
-              gp.gameState = gp.gameOverState;
+                gp.playSE(Sound.SoundType.GAME_OVER);
+                gp.stopMusic();
+                gp.gameState = gp.gameOverState;
             }
         }
 
@@ -503,6 +506,10 @@ public class Player extends Entity{
         }
     }
 
+    /**
+     * Checks if the player has gained enough xp for a level up
+     * and Progresses level if so
+     */
     public void checkLevelUp(){
 
         if (exp > nextLevelExp){
@@ -568,6 +575,19 @@ public class Player extends Entity{
                 gp.interactiveTiles[i] = gp.interactiveTiles[i].getDestroyedForm();
             }
         }
-
     }
+
+    public void setDefaultPosition(){
+        worldX = gp.tileSize * 23;
+        worldY = gp.tileSize * 21;
+        direction = "down";
+    }
+
+    public void restoreLifeAndMana(){
+        life = maxLife;
+        mana = maxMana;
+        invincible = false;
+    }
+
+
 }

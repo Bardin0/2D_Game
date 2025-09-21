@@ -120,7 +120,7 @@ public class UI {
     public void drawTitleScreen(){
 
         g2.setColor(new Color(199, 137, 137));
-    g2.fillRect(0,0,gp.screenWidth,gp.screenHeight);
+        g2.fillRect(0,0,gp.screenWidth,gp.screenHeight);
 
         // Name
         g2.setFont(g2.getFont().deriveFont(Font.PLAIN,96));

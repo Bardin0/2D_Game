@@ -329,8 +329,19 @@ public class KeyHandler implements KeyListener {
 
         if (code == KeyEvent.VK_S){
             gp.ui.commandNumber++;
+            gp.playSE(Sound.SoundType.CURSOR);
             if (gp.ui.commandNumber > 1){
                 gp.ui.commandNumber = 0;
+            }
+        }
+
+        if (code == KeyEvent.VK_ENTER){
+            if (gp.ui.commandNumber == 0){
+                gp.retryGame();
+                gp.gameState = gp.playState;
+            } else if (gp.ui.commandNumber == 1){
+                gp.restartGame();
+                gp.gameState = gp.titleState;
             }
         }
 
