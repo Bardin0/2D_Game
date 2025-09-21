@@ -9,6 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 
 public class GamePanel extends JPanel implements Runnable{
@@ -34,7 +35,8 @@ public class GamePanel extends JPanel implements Runnable{
     // WORLD PARAMETERS
     public final int maxWorldCol = 50;
     public final int maxWorldRow = 50;
-
+    public final int maxMap = 10;   // The max number of maps for the game
+    public int currentMap = 0; // The currently selected map
 
     //System
     Thread gameThread;
@@ -50,11 +52,11 @@ public class GamePanel extends JPanel implements Runnable{
 
     //Entity and Object
     public Player player = new Player(this, keyHandler);
-    public Entity[] obj = new Entity[20];
-    public Entity[] npc = new Entity[10];
+    public Entity[][] obj = new Entity[maxMap][20];
+    public Entity[][] npc = new Entity[maxMap][10];
+    public Entity[][] monster = new Entity[maxMap][20];
+    public InteractiveTile[][] interactiveTiles = new InteractiveTile[maxMap][50];
     public ArrayList<Entity> projectileList = new ArrayList<>();
-    public Entity[] monster = new Entity[20];
-    public InteractiveTile[] interactiveTiles = new InteractiveTile[50];
     public ArrayList<Entity> particles = new ArrayList<>();
     ArrayList<Entity> entityList = new ArrayList<>();
 
@@ -100,6 +102,10 @@ public class GamePanel extends JPanel implements Runnable{
         }
     }
 
+    /**
+     * Resets player position, life and mana. Respawns all NPCs and Monsters
+     * and restarts the music.
+     */
     public void retryGame(){
 
         player.setDefaultPosition();
@@ -110,6 +116,10 @@ public class GamePanel extends JPanel implements Runnable{
 
     }
 
+    /**
+     * Resets player position, life and mana. Respawns all NPCs, Monsters,
+     * Interactive Tiles and Objects. Does not restart the music.
+     */
     public void restartGame(){
 
         player.setDefaultPosition();
@@ -121,7 +131,9 @@ public class GamePanel extends JPanel implements Runnable{
 
     }
 
-
+    /**
+     * Sets the game to full screen mode
+     */
     public void setFullScreen(){
 
         // Get local screen device
@@ -187,22 +199,22 @@ public class GamePanel extends JPanel implements Runnable{
 
             player.update();
 
-            // Updates all npcs
-            for (Entity entity: npc){
-                if (entity != null){
-                    entity.update();
+            // Updates all npc's
+            for (int i = 0; i < npc[1].length; i++) {
+                if (npc[currentMap][i] != null) {
+                    npc[currentMap][i].update();
                 }
             }
 
             //Updates all monsters
-            for (int i = 0; i < monster.length; i++){
-                if (monster[i] != null){
-                    if (monster[i].alive && !monster[i].dying){
-                        monster[i].update();
+            for (int i = 0; i < monster[1].length; i++){
+                if (monster[currentMap][i] != null){
+                    if (monster[currentMap][i].alive && !monster[currentMap][i].dying){
+                        monster[currentMap][i].update();
                     }
-                    if (!monster[i].alive){
-                        monster[i].checkDrop();
-                        monster[i] = null;
+                    if (!monster[currentMap][i].alive){
+                        monster[currentMap][i].checkDrop();
+                        monster[currentMap][i] = null;
                     }
                 }
             }
@@ -230,11 +242,10 @@ public class GamePanel extends JPanel implements Runnable{
                 }
             }
 
-            for (Entity entity: interactiveTiles){
-                if(entity != null){
-                    entity.update();
+            for (int i = 0; i < interactiveTiles[1].length ; i++){
+                if (interactiveTiles[currentMap][i] != null){
+                    interactiveTiles[currentMap][i].update();
                 }
-
             }
 
         }
@@ -262,9 +273,9 @@ public class GamePanel extends JPanel implements Runnable{
             tileM.draw(g2);
 
             // Interactive Tile
-            for (Entity entity: interactiveTiles){
-                if (entity != null){
-                    entity.draw(g2);
+            for (Entity e : interactiveTiles[currentMap]){
+                if (e != null){
+                    entityList.add(e);
                 }
             }
 
@@ -272,21 +283,21 @@ public class GamePanel extends JPanel implements Runnable{
             entityList.add(player);
 
             // Adds Npc's
-            for (Entity entity : npc){
+            for (Entity entity : npc[currentMap]){
                 if (entity != null){
                     entityList.add(entity);
                 }
             }
 
             // Adds objects
-            for (Entity entity : obj){
+            for (Entity entity : obj[currentMap]){
                 if (entity != null){
                     entityList.add(entity);
                 }
             }
 
             // Adds Monsters
-            for (Entity entity: monster){
+            for (Entity entity: monster[currentMap]){
                 if (entity != null){
                     entityList.add(entity);
                 }
@@ -306,7 +317,7 @@ public class GamePanel extends JPanel implements Runnable{
             }
 
             // Sort entity list
-            entityList.sort(new Comparator<Entity>() {
+            Collections.sort(entityList, new Comparator<Entity>() {
                 @Override
                 public int compare(Entity e1, Entity e2) {
                     return Integer.compare(e1.worldY, e2.worldY);
@@ -367,7 +378,7 @@ public class GamePanel extends JPanel implements Runnable{
 
     /**
      * Plays sound effect
-     * @param i The index of the sound effect to play
+     * @param soundType The index of the sound effect to play
      */
     public void playSE(Sound.SoundType soundType){
         SE.setFile(soundType);

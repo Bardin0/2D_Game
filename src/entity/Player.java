@@ -50,10 +50,8 @@ public class Player extends Entity{
 
     public void setDefaultValues(){
 
-        worldX = gp.tileSize*23;
-        worldY = gp.tileSize*21;
+        setDefaultPosition();
         speed = 5;
-        direction = "down";
         type = typePlayer;
 
         // Stats
@@ -336,14 +334,18 @@ public class Player extends Entity{
 
     }
 
+    /**
+     * Adds an item to the inventory of the player
+     * @param i The index of the item that was picked up within gp.obj
+     */
     public void pickupObject(int i){
 
         if (i != 999){
 
             // Pickup Only Items
-            if (gp.obj[i].type == typePickupOnly){
-                gp.obj[i].use(this);
-                gp.obj[i] = null;   // Remove from the map
+            if (gp.obj[gp.currentMap][i].type == typePickupOnly){
+                gp.obj[gp.currentMap][i].use(this);
+                gp.obj[gp.currentMap][i] = null;   // Remove from the map
             }
             else{
                 //Inventory Items
@@ -351,9 +353,9 @@ public class Player extends Entity{
 
                 if (inventory.size() != maxInventorySpace){
 
-                    inventory.add(gp.obj[i]);
+                    inventory.add(gp.obj[gp.currentMap][i]);
                     gp.playSE(Sound.SoundType.COIN);
-                    text = "Picked up " + gp.obj[i].name;
+                    text = "Picked up " + gp.obj[gp.currentMap][i].name;
 
                 }
                 else{
@@ -363,10 +365,14 @@ public class Player extends Entity{
                 gp.ui.addMessage(text);
 
             }
-            gp.obj[i] = null;
+            gp.obj[gp.currentMap][i] = null;
         }
     }
 
+    /**
+     * Draws the player to the screen
+     * @param g2 The {@link Graphics2D} object used for drawing the entity and related visuals.
+     */
     public void draw(Graphics2D g2){
 
         BufferedImage image = null;
@@ -451,24 +457,32 @@ public class Player extends Entity{
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1F));
     }
 
+    /**
+     * Interacts the player with an npc
+     * @param i The index of the npc in gp.npc
+     */
     public void interactNPC(int i){
 
         if (gp.keyHandler.enterPressed){
             if (i != 999){
                 attackCanceled = true;
                 gp.gameState = gp.dialogueState;
-                gp.npc[i].speak();
+                gp.npc[gp.currentMap][i].speak();
             }
         }
     }
 
+    /**
+     * Event handler for when the player contacts a monster
+     * @param i The index of the monster in gp.monster
+     */
     public void contactMonster(int i){
 
         if (i != 999){
-            if (!invincible){
+            if (!invincible && !gp.monster[gp.currentMap][i].dying){
                 gp.playSE(Sound.SoundType.RECEIVE_DAMAGE);
 
-                int damage = gp.monster[i].attack - defense;
+                int damage = gp.monster[gp.currentMap][i].attack - defense;
                 if (damage < 0){
                     damage = 0;
                 }
@@ -480,27 +494,32 @@ public class Player extends Entity{
         }
     }
 
+    /**
+     * Event handler for when the player attacks a monster
+     * @param i The index of the monster that was attacked in gp.monster
+     * @param attack The attack value of the player
+     */
     public void damageMonster(int i, int attack){
 
         if (i != 999) {
 
-            if (!gp.monster[i].invincible){
+            if (!gp.monster[gp.currentMap][i].invincible){
                 gp.playSE(Sound.SoundType.HITMONSTER);
 
-                int damage = attack - gp.monster[i].defense;
+                int damage = attack - gp.monster[gp.currentMap][i].defense;
                 if (damage < 0){
                     damage = 0;
                 }
-                gp.monster[i].life -= damage;
+                gp.monster[gp.currentMap][i].life -= damage;
                 gp.ui.addMessage(damage + " damage!");
-                gp.monster[i].invincible = true;
-                gp.monster[i].damageReaction();
+                gp.monster[gp.currentMap][i].invincible = true;
+                gp.monster[gp.currentMap][i].damageReaction();
 
-                if (gp.monster[i].life <= 0){
-                    gp.monster[i].dying = true;
-                    gp.ui.addMessage(gp.monster[i].name + " died!");
-                    gp.ui.addMessage("EXP + " + gp.monster[i].exp);
-                    exp += gp.monster[i].exp;
+                if (gp.monster[gp.currentMap][i].life <= 0){
+                    gp.monster[gp.currentMap][i].dying = true;
+                    gp.ui.addMessage(gp.monster[gp.currentMap][i].name + " died!");
+                    gp.ui.addMessage("EXP + " + gp.monster[gp.currentMap][i].exp);
+                    exp += gp.monster[gp.currentMap][i].exp;
                     checkLevelUp();
                 }
             }
@@ -532,6 +551,9 @@ public class Player extends Entity{
 
     }
 
+    /**
+     * Selects an item in the players inventory and performs an action with it
+     */
     public void selectItem(){
 
         int itemIndex = gp.ui.getItemInventoryIndex();
@@ -539,6 +561,7 @@ public class Player extends Entity{
         if (itemIndex < inventory.size()){
             Entity selectedItem = inventory.get(itemIndex);
 
+            // There should be a universal method for this for equippable items/consumables
             if (selectedItem.type == typeSword || selectedItem.type == typeAxe){
                 currentWeapon = selectedItem;
                 attack = getAttack();
@@ -565,25 +588,35 @@ public class Player extends Entity{
      */
     public void damageInteractiveTile(int i ){
 
-        if (i != 999 && gp.interactiveTiles[i].destructible && gp.interactiveTiles[i].checkValidWeaponToBreak(this) && !gp.interactiveTiles[i].invincible){
-            gp.interactiveTiles[i].playSE();
-            gp.interactiveTiles[i].life--;
-            gp.interactiveTiles[i].invincible = true;
+        if (i != 999 &&
+                gp.interactiveTiles[gp.currentMap][i].destructible &&
+                gp.interactiveTiles[gp.currentMap][i].checkValidWeaponToBreak(this) &&
+                !gp.interactiveTiles[gp.currentMap][i].invincible){
 
-            generateParticle(gp.interactiveTiles[i], gp.interactiveTiles[i]);
+            gp.interactiveTiles[gp.currentMap][i].playSE();
+            gp.interactiveTiles[gp.currentMap][i].life--;
+            gp.interactiveTiles[gp.currentMap][i].invincible = true;
 
-            if (gp.interactiveTiles[i].life == 0) {
-                gp.interactiveTiles[i] = gp.interactiveTiles[i].getDestroyedForm();
+            generateParticle(gp.interactiveTiles[gp.currentMap][i], gp.interactiveTiles[gp.currentMap][i]);
+
+            if (gp.interactiveTiles[gp.currentMap][i].life == 0) {
+                gp.interactiveTiles[gp.currentMap][i] = gp.interactiveTiles[gp.currentMap][i].getDestroyedForm();
             }
         }
     }
 
+    /**
+     * Sets the default position for the player
+     */
     public void setDefaultPosition(){
         worldX = gp.tileSize * 23;
         worldY = gp.tileSize * 21;
         direction = "down";
     }
 
+    /**
+     * Fully restores the players life and mana
+     */
     public void restoreLifeAndMana(){
         life = maxLife;
         mana = maxMana;

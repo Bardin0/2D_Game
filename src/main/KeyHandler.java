@@ -169,8 +169,17 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_ESCAPE:
                 gp.gameState = gp.optionsState;
                 break;
+
+            // DEBUG
             case KeyEvent.VK_T:
                 checkDrawTime = !checkDrawTime;
+                break;
+            case KeyEvent.VK_R:
+                switch (gp.currentMap){
+                    case 0 -> gp.tileM.loadMap("/maps/worldV3.txt", 0);
+                    case 1 ->gp.tileM.loadMap("/maps/interior01.txt", 1);
+
+                }
                 break;
         }
 
