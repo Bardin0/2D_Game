@@ -246,6 +246,7 @@ public class Player extends Entity{
 
             if (life <= 0){
                 gp.playSE(Sound.SoundType.GAME_OVER);
+                gp.ui.commandNumber = -1; // Prevents spamming enter from instantly retrying.
                 gp.stopMusic();
                 gp.gameState = gp.gameOverState;
             }
