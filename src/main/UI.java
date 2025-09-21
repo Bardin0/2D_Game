@@ -33,6 +33,8 @@ public class UI {
     public final int COMMAND_BACK = 5;
 
     int subState = 0;
+    int fadeoutCounter = 0;
+    int fadeinCounter = 0;
 
     // Substate constants
     public static final int OPTIONS_MAIN = 0;
@@ -109,6 +111,9 @@ public class UI {
         }
         else if(gp.gameState == gp.gameOverState){
             drawGameOverScreen();
+        }
+        else if (gp.gameState == gp.transitionState){
+            drawTransition();
         }
 
 
@@ -845,6 +850,25 @@ public class UI {
            g2.drawString(">", x-40, y); 
         }
 
-    } 
+    }
+
+    public void drawTransition(){
+
+        fadeinCounter++;
+        g2.setColor(new Color(0,0,0,fadeinCounter*5));
+        g2.fillRect(0,0,gp.screenWidth,gp.screenHeight);
+
+        if (fadeinCounter == 50){
+            fadeinCounter = 0;
+            gp.gameState = gp.playState;
+            gp.currentMap = gp.eventH.tempMap;
+            gp.player.worldX = gp.tileSize * gp.eventH.tempCol;
+            gp.player.worldY = gp.tileSize * gp.eventH.tempRow;
+            gp.eventH.previousEventX = gp.player.worldX;
+            gp.eventH.previousEventY = gp.player.worldY;
+        }
+
+
+    }
 
 }
