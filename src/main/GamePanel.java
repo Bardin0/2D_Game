@@ -36,7 +36,7 @@ public class GamePanel extends JPanel implements Runnable{
     public final int maxWorldCol = 50;
     public final int maxWorldRow = 50;
     public final int maxMap = 10;   // The max number of maps for the game
-    public int currentMap = 0; // The currently selected map
+    public int currentMap = 1; // The currently selected map
 
     //System
     Thread gameThread;

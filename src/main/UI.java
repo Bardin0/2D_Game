@@ -47,6 +47,13 @@ public class UI {
     public static final int OPTIONS_CONTROLS = 2;
     public static final int OPTIONS_QUIT = 3;
 
+    public static final int TRADE_SELECT = 0;
+    public static final int TRADE_BUY = 1;
+    public static final int TRADE_SELL = 2;
+
+    public boolean inspecting = false;
+    public Entity inspectedItem = null;
+
     public int slotCol = 0;
     public int slotRow = 0;
 
@@ -121,7 +128,7 @@ public class UI {
             drawTransition();
         }
         else if (gp.gameState == gp.tradeState){
-            drawTradeState();
+            drawTradeScreen();
         }
 
 
@@ -877,7 +884,7 @@ public class UI {
         }
     }
 
-    public void drawTradeState(){
+    public void drawTradeScreen(){
 
         switch(subState){
             case 0: tradeSelect(); break;
@@ -889,12 +896,124 @@ public class UI {
 
     public void tradeSelect() {
         // Continue here at 16:30, Trade System
+
+        drawDialogueScreen();
+
         //Draw Window
-        int x = gp.tileSize * 15;
-        int y = gp.tileSize * 15;
+        int x = gp.tileSize * 5;
+        int y = gp.tileSize * 5;
+        int width = gp.tileSize * 9;
+        int height = (int)(gp.tileSize * 3.5);
+        drawSubWindow(x, y, width, height);
+
+        // Draw Text
+        x = gp.tileSize * 7;
+        y = gp.tileSize * 8;
+        g2.drawString("Buy", x, y);
+        if (commandNumber == 0) {
+            g2.drawString(">", x - 25, y);
+            if (gp.keyHandler.enterPressed) {
+                subState = 1;
+                commandNumber = 0;
+            }
+        }
+
+        x += gp.tileSize * 2;
+        g2.drawString("Sell", x, y);
+        if (commandNumber == 1) {
+            g2.drawString(">", x - 25, y);
+            if (gp.keyHandler.enterPressed) {
+                subState = 2;
+                commandNumber = 0;
+            }
+        }
+
+        x += gp.tileSize * 2;
+        g2.drawString("Leave", x, y);
+        if (commandNumber == 2) {
+            g2.drawString(">", x - 25, y);
+            if (gp.keyHandler.enterPressed) {
+                subState = 0;
+                commandNumber = 0;
+                gp.gameState = gp.dialogueState;
+                currentDialogue = "Later, chump.";
+            }
+        }
+
     }
 
     public void tradeBuy() {
+
+        if(gp.ui.inspecting){
+            // Make the inspect screen here.
+        }
+
+        drawDialogueScreen();
+
+        //Draw Window
+        int x = gp.tileSize * 5;
+        int y = gp.tileSize * 5;
+        int width = gp.tileSize * 9;
+        int height = (int)(gp.tileSize * 3.5);
+        drawSubWindow(x, y, width, height);
+
+        final int slotXStart = gp.tileSize * 5 + 20;
+        final int slotYStart = gp.tileSize * 5 + 20;
+        int slotX = slotXStart;
+        int slotY = slotYStart;
+        int slotSize = gp.tileSize + 3;
+
+        // Draw items
+        for (int i = 0; i < gp.ui.npc.inventory.size(); i++){
+
+            g2.drawImage(gp.ui.npc.inventory.get(i).down1, slotX, slotY, null);
+
+            slotX+= slotSize;
+            if (i == 7){
+                slotX = slotXStart;
+                slotY += slotSize;
+            }
+        }
+
+        // Cursor
+        int cursorX = slotXStart + (slotSize * slotCol);
+        int cursorY = slotYStart + (slotSize * slotRow);
+        int cursorWidth = gp.tileSize;
+        int cursorHeight = gp.tileSize;
+
+        // Draw cursor
+        g2.setColor(Color.white);
+        g2.setStroke(new BasicStroke(3));
+        g2.drawRoundRect(cursorX, cursorY, cursorWidth, cursorHeight, 10, 10);
+
+        // Description window
+        int frameX = gp.tileSize * (5 + slotCol);
+        int frameY = gp.tileSize * (6 + slotRow) + 20;
+        int frameWidth = gp.tileSize * 7;
+        int frameHeight = gp.tileSize * 4;
+
+        // Draw description text
+        int textX = frameX + 20;
+        int textY = frameY + gp.tileSize;
+        g2.setFont(g2.getFont().deriveFont(36F));
+
+        int itemIndex = getItemInventoryIndex();
+        if (itemIndex < gp.ui.npc.inventory.size()){
+
+            int priceY = frameY + (gp.tileSize * 4) - 15;
+            drawSubWindow(frameX,frameY,frameWidth,frameHeight);    // Creates sub window only when an item is selected in inventory
+            for (String line: gp.ui.npc.inventory.get(itemIndex).description.split("\n")){
+                if (textY + 36 >= priceY ){
+                    line = line + "...";
+                    g2.drawString(line, textX, textY);
+                    break;
+                }
+                g2.drawString(line, textX, textY);
+                textY += 36;
+            }
+            g2.drawString("Price: " + gp.ui.npc.inventory.get(itemIndex).price + "g", textX, priceY);
+
+        }
 
     }
 

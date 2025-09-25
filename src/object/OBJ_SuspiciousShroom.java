@@ -13,9 +13,11 @@ public class OBJ_SuspiciousShroom extends Entity {
         this.gp = gp;
 
         type = typeConsumable;
+        price = 2;
         name = "Suspicious Shroom";
         down1 = setup("objects/SuspiciousShroom",gp.tileSize,gp.tileSize);
-        description = "[" + name + "] - \nA suspicious fungi \npurchased from a shady merchant.\nIt looks like it can be consumed.";
+        description = "[" + name + "] - \nA suspicious fungi. \nIt looks like it \n can be consumed.\n I wonder what happens\n" +
+                " if you eat it?";
         value = 3;
     }
 

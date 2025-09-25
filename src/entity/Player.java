@@ -614,8 +614,8 @@ public class Player extends Entity{
      * Sets the default position for the player
      */
     public void setDefaultPosition(){
-        worldX = gp.tileSize * 23;
-        worldY = gp.tileSize * 21;
+        worldX = gp.tileSize * 12;
+        worldY = gp.tileSize * 12;
         direction = "down";
     }
 

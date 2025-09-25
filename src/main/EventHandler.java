@@ -63,9 +63,9 @@ public class EventHandler {
             } else if (hit(0, 23, 12, "up")) {
                 healingPool(gp.dialogueState);
             } else if (hit(0, 10, 39, "any")) {
-                teleport(1, 12, 13);
+                teleport(1, 12, 13);    // to map 1
             } else if (hit(1, 12, 13, "any")) {
-                teleport(0, 10, 39);
+                teleport(0, 10, 39);   // to map 0
             }else if (hit(1, 12, 9, "up")) {
                 speak(gp.npc[1][0]);
             }

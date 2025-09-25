@@ -12,13 +12,14 @@ public class KeyHandler implements KeyListener {
     //DEBUG
     public boolean checkDrawTime = false;
 
-    public KeyHandler(GamePanel gp){
-        this.gp=gp;
+    public KeyHandler(GamePanel gp) {
+        this.gp = gp;
     }
 
     /**
      * Invoked when a key has been typed.
      * Not used but must be implemented as part of KeyListener interface.
+     *
      * @param e the event to be processed
      */
     @Override
@@ -29,6 +30,7 @@ public class KeyHandler implements KeyListener {
     /**
      * Invoked when a key has been pressed.
      * Sends the key code to the appropriate game state handler.
+     *
      * @param e the event to be processed
      */
     @Override
@@ -46,90 +48,91 @@ public class KeyHandler implements KeyListener {
         }
 
         //Pause State
-        else if (gp.gameState == gp.pauseState){
+        else if (gp.gameState == gp.pauseState) {
             pauseState(code);
         }
 
         //Dialogue state
-        else if (gp.gameState == gp.dialogueState){
+        else if (gp.gameState == gp.dialogueState) {
             dialogueState(code);
         }
 
         // Menu State
-        else if (gp.gameState == gp.menuState){
+        else if (gp.gameState == gp.menuState) {
             menuState(code);
-        }
-
-       else if (gp.gameState == gp.optionsState){
-           optionsState(code);
-        }
-        else if (gp.gameState == gp.gameOverState){
+        } else if (gp.gameState == gp.optionsState) {
+            optionsState(code);
+        } else if (gp.gameState == gp.gameOverState) {
             gameOverState(code);
+        } else if (gp.gameState == gp.tradeState) {
+            tradeState(code);
         }
     }
 
     /**
      * Invoked when a key has been released.
      * Updates the state of movement and action keys to false.
+     *
      * @param e the event to be processed
      */
     @Override
     public void keyReleased(KeyEvent e) {
         int code = e.getKeyCode();
-        if(code == KeyEvent.VK_W){
+        if (code == KeyEvent.VK_W) {
             upPressed = false;
         }
-        if(code == KeyEvent.VK_A){
+        if (code == KeyEvent.VK_A) {
             leftPressed = false;
         }
-        if(code == KeyEvent.VK_S){
+        if (code == KeyEvent.VK_S) {
             downPressed = false;
         }
-        if(code == KeyEvent.VK_D){
+        if (code == KeyEvent.VK_D) {
             rightPressed = false;
         }
-        if (code == KeyEvent.VK_F){
+        if (code == KeyEvent.VK_F) {
             shootKeyPressed = false;
         }
     }
 
     /**
      * Handler for when in the title game state
+     *
      * @param code the key code given by key pressed by user.
      */
-    public void titleState(int code){
+    public void titleState(int code) {
 
         // Move cursor up
-        if (code == KeyEvent.VK_W){
+        if (code == KeyEvent.VK_W) {
             gp.ui.commandNumber--;
             // If it cant move up, start from bottom
-            if (gp.ui.commandNumber < 0){
+            if (gp.ui.commandNumber < 0) {
                 gp.ui.commandNumber = 2;
             }
         }
 
         // Move cursor down
-        if (code == KeyEvent.VK_S){
+        if (code == KeyEvent.VK_S) {
             gp.ui.commandNumber++;
             // If it cant move down, start from top
-            if (gp.ui.commandNumber > 2){
+            if (gp.ui.commandNumber > 2) {
                 gp.ui.commandNumber = 0;
             }
         }
 
         // Select option
-        if (code == KeyEvent.VK_ENTER){
+        if (code == KeyEvent.VK_ENTER) {
             // Start Game
-            if (gp.ui.commandNumber == 0){
+            if (gp.ui.commandNumber == 0) {
                 gp.gameState = gp.playState;
                 gp.playMusic(Sound.SoundType.MUSIC);
             }
             // Load game
-            else if (gp.ui.commandNumber == 1){
+            else if (gp.ui.commandNumber == 1) {
                 //add later
             }
             // Quit
-            else if (gp.ui.commandNumber == 2){
+            else if (gp.ui.commandNumber == 2) {
                 System.exit(0);
             }
         }
@@ -137,10 +140,11 @@ public class KeyHandler implements KeyListener {
 
     /**
      * Handles inputs while in play state
+     *
      * @param code The key code given by user key press
      */
-    public void playState(int code){
-        switch (code){
+    public void playState(int code) {
+        switch (code) {
             case KeyEvent.VK_W:
                 upPressed = true;
                 break;
@@ -175,9 +179,9 @@ public class KeyHandler implements KeyListener {
                 checkDrawTime = !checkDrawTime;
                 break;
             case KeyEvent.VK_R:
-                switch (gp.currentMap){
+                switch (gp.currentMap) {
                     case 0 -> gp.tileM.loadMap("/maps/worldV3.txt", 0);
-                    case 1 ->gp.tileM.loadMap("/maps/interior01.txt", 1);
+                    case 1 -> gp.tileM.loadMap("/maps/interior01.txt", 1);
 
                 }
                 break;
@@ -187,74 +191,78 @@ public class KeyHandler implements KeyListener {
 
     /**
      * Handles key inputs when in the pause state
+     *
      * @param code The key pressed
      */
-    public void pauseState(int code){
-        if (code == KeyEvent.VK_P){
+    public void pauseState(int code) {
+        if (code == KeyEvent.VK_P) {
             gp.gameState = gp.playState;
             gp.playMusic(Sound.SoundType.MUSIC);
         }
-        if (code == KeyEvent.VK_ENTER){
+        if (code == KeyEvent.VK_ENTER) {
             System.exit(0);
         }
     }
 
     /**
      * Handles key inputs while in the dialogue state
+     *
      * @param code The key pressed
      */
-    public void dialogueState(int code){
-        if (code == KeyEvent.VK_ENTER){
+    public void dialogueState(int code) {
+        if (code == KeyEvent.VK_ENTER) {
             gp.gameState = gp.playState;
         }
     }
 
     /**
      * Handles key inputs in the menu state
+     *
      * @param code The key pressed
      */
-    public void menuState(int code){
-        if (code == KeyEvent.VK_C){
+    public void menuState(int code) {
+        if (code == KeyEvent.VK_C) {
             gp.gameState = gp.playState;
         }
 
-        if (code == KeyEvent.VK_W){
-            if (gp.ui.slotRow != 0){
+        if (code == KeyEvent.VK_W) {
+            if (gp.ui.slotRow != 0) {
                 gp.ui.slotRow--;
                 gp.playSE(Sound.SoundType.CURSOR);
             }
 
         }
-        if (code == KeyEvent.VK_A){
-            if (gp.ui.slotCol != 0){
+        if (code == KeyEvent.VK_A) {
+            if (gp.ui.slotCol != 0) {
                 gp.ui.slotCol--;
                 gp.playSE(Sound.SoundType.CURSOR);
             }
 
         }
-        if (code == KeyEvent.VK_S){
-            if (gp.ui.slotRow != 3){
+        if (code == KeyEvent.VK_S) {
+            if (gp.ui.slotRow != 3) {
                 gp.ui.slotRow++;
                 gp.playSE(Sound.SoundType.CURSOR);
             }
 
         }
-        if (code == KeyEvent.VK_D){
-            if (gp.ui.slotCol != 4){
+        if (code == KeyEvent.VK_D) {
+            if (gp.ui.slotCol != 4) {
                 gp.ui.slotCol++;
                 gp.playSE(Sound.SoundType.CURSOR);
             }
         }
-        if (code == KeyEvent.VK_ENTER){
+        if (code == KeyEvent.VK_ENTER) {
             gp.player.selectItem();
         }
     }
 
     /**
      * Handles key inputs in the options stage
+     *
      * @param code The key pressed
      */
-    public void optionsState(int code){
+    public void optionsState(int code) {
 
         int maxCommandNumber = switch (gp.ui.subState) {
             case UI.OPTIONS_MAIN -> 5;
@@ -262,7 +270,7 @@ public class KeyHandler implements KeyListener {
             default -> 0;
         };
 
-        switch (code){
+        switch (code) {
 
             case KeyEvent.VK_ESCAPE:
                 gp.gameState = gp.playState;
@@ -274,7 +282,7 @@ public class KeyHandler implements KeyListener {
 
             case KeyEvent.VK_W:
                 gp.ui.commandNumber--;
-                if (gp.ui.commandNumber < 0){
+                if (gp.ui.commandNumber < 0) {
                     gp.ui.commandNumber = maxCommandNumber;
                 }
                 gp.playSE(Sound.SoundType.CURSOR);
@@ -282,7 +290,7 @@ public class KeyHandler implements KeyListener {
 
             case KeyEvent.VK_S:
                 gp.ui.commandNumber++;
-                if (gp.ui.commandNumber > maxCommandNumber){
+                if (gp.ui.commandNumber > maxCommandNumber) {
                     gp.ui.commandNumber = 0;
                 }
                 gp.playSE(Sound.SoundType.CURSOR);
@@ -290,16 +298,16 @@ public class KeyHandler implements KeyListener {
 
             case KeyEvent.VK_A:
                 // Check if we are in the options main screen
-                if (gp.ui.subState == UI.OPTIONS_MAIN){
+                if (gp.ui.subState == UI.OPTIONS_MAIN) {
                     // Check if the music volume can be lowered
-                    if (gp.ui.commandNumber == gp.ui.COMMAND_MUSIC && gp.music.volumeScale > 0){
+                    if (gp.ui.commandNumber == gp.ui.COMMAND_MUSIC && gp.music.volumeScale > 0) {
                         gp.music.volumeScale--;
                         gp.music.setVolume();
                         gp.playSE(Sound.SoundType.CURSOR);
                     }
 
                     // Check if the sound effects volume can be lowered
-                    if (gp.ui.commandNumber == gp.ui.COMMAND_SE && gp.SE.volumeScale > 0){
+                    if (gp.ui.commandNumber == gp.ui.COMMAND_SE && gp.SE.volumeScale > 0) {
                         gp.SE.volumeScale--;
                         gp.playSE(Sound.SoundType.CURSOR);
                     }
@@ -308,16 +316,16 @@ public class KeyHandler implements KeyListener {
 
             case KeyEvent.VK_D:
                 // Check if we are in the options main screen
-                if (gp.ui.subState == UI.OPTIONS_MAIN){
+                if (gp.ui.subState == UI.OPTIONS_MAIN) {
                     // Check if the music volume can be increased
-                    if (gp.ui.commandNumber == 1 && gp.music.volumeScale < 5){
+                    if (gp.ui.commandNumber == 1 && gp.music.volumeScale < 5) {
                         gp.music.volumeScale++;
                         gp.music.setVolume();
                         gp.playSE(Sound.SoundType.CURSOR);
                     }
 
                     // Check if the sound effect volume can be increased
-                    if (gp.ui.commandNumber == gp.ui.COMMAND_SE && gp.SE.volumeScale < 5){
+                    if (gp.ui.commandNumber == gp.ui.COMMAND_SE && gp.SE.volumeScale < 5) {
                         gp.SE.volumeScale++;
                         gp.playSE(Sound.SoundType.CURSOR);
                     }
@@ -326,37 +334,119 @@ public class KeyHandler implements KeyListener {
 
     }
 
-    public void gameOverState(int code){
+    public void gameOverState(int code) {
 
-        if (code == KeyEvent.VK_W){
+        if (code == KeyEvent.VK_W) {
             gp.ui.commandNumber--;
             gp.playSE(Sound.SoundType.CURSOR);
-            if (gp.ui.commandNumber < 0){
-                gp.ui.commandNumber = 1; 
+            if (gp.ui.commandNumber < 0) {
+                gp.ui.commandNumber = 1;
             }
         }
 
-        if (code == KeyEvent.VK_S){
+        if (code == KeyEvent.VK_S) {
             gp.ui.commandNumber++;
             gp.playSE(Sound.SoundType.CURSOR);
-            if (gp.ui.commandNumber > 1){
+            if (gp.ui.commandNumber > 1) {
                 gp.ui.commandNumber = 0;
             }
         }
 
-        if (code == KeyEvent.VK_ENTER){
-            if (gp.ui.commandNumber == 0){
+        if (code == KeyEvent.VK_ENTER) {
+            if (gp.ui.commandNumber == 0) {
                 gp.retryGame();
                 gp.gameState = gp.playState;
-            } else if (gp.ui.commandNumber == 1){
+            } else if (gp.ui.commandNumber == 1) {
                 gp.restartGame();
                 gp.gameState = gp.titleState;
             }
         }
 
     }
-        
+
+    public void tradeState(int code) {
+
+        if (code == KeyEvent.VK_ESCAPE) {
+            gp.ui.commandNumber = 2;
+            enterPressed = true;
+        }
+        else if (code == KeyEvent.VK_ENTER) {
+            enterPressed = true;
+        }
+        if (gp.ui.subState == UI.TRADE_SELECT) {
+
+            if (code == KeyEvent.VK_D) {
+                gp.ui.commandNumber++;
+                gp.playSE(Sound.SoundType.CURSOR);
+                if (gp.ui.commandNumber > 2) {
+                    gp.ui.commandNumber = 0;
+                }
+            }
+            else if (code == KeyEvent.VK_A) {
+                gp.ui.commandNumber--;
+                gp.playSE(Sound.SoundType.CURSOR);
+                if (gp.ui.commandNumber < 0) {
+                    gp.ui.commandNumber = 2;
+                }
+            }
+            else if (code == KeyEvent.VK_W) {
+                if (gp.ui.slotRow != 0) {
+                    gp.ui.slotRow--;
+                    gp.playSE(Sound.SoundType.CURSOR);
+                }
+
+            }
+            else if (code == KeyEvent.VK_S) {
+                if (gp.ui.slotRow != 3) {
+                    gp.ui.slotRow++;
+                    gp.playSE(Sound.SoundType.CURSOR);
+                }
+            }
+        }
+        else if (gp.ui.subState == UI.TRADE_BUY) {
+
+            if (code == KeyEvent.VK_I){
+                gp.ui.inspecting = !gp.ui.inspecting;
+                gp.playSE(Sound.SoundType.CURSOR);
+            }
+
+            if (code == KeyEvent.VK_W) {
+                gp.ui.slotRow--;
+                gp.playSE(Sound.SoundType.CURSOR);
+                if (gp.ui.slotRow < 0) {
+                    gp.ui.slotRow = 1;
+                }
+            }
+            else if (code == KeyEvent.VK_A) {
+                gp.ui.slotCol--;
+                gp.playSE(Sound.SoundType.CURSOR);
+                if (gp.ui.slotCol < 0) {
+                    gp.ui.slotCol = 7;
+                }
+            }
+            else if (code == KeyEvent.VK_S) {
+                gp.ui.slotRow++;
+                gp.playSE(Sound.SoundType.CURSOR);
+                if (gp.ui.slotRow > 1) {
+                    gp.ui.slotRow = 0;
+                }
+            }
+            else if (code == KeyEvent.VK_D) {
+                gp.ui.slotCol++;
+                gp.playSE(Sound.SoundType.CURSOR);
+                if (gp.ui.slotCol > 7) {
+                    gp.ui.slotCol = 0;
+                }
+
+            }
+
+        }
+        else if (gp.ui.subState == UI.TRADE_SELL) {
+
+        }
+    }
 }
+
 
 
 

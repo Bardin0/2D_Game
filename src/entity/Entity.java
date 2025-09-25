@@ -102,6 +102,8 @@ public class Entity {
     public ArrayList<Entity> inventory = new ArrayList<>();
     public final int maxInventorySpace = 20;
 
+    public int price;
+
     public boolean onShrooms = false;
     public long shroomDuration = 0;
 

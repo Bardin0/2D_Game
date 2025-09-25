@@ -8,8 +8,10 @@ public class OBJ_Boots extends Entity {
     public OBJ_Boots(GamePanel gp){
 
         super(gp);
-        name = "Boots";
+        name = "Swift Boots";
+        price = 3;
         down1 = setup("objects/boots", gp.tileSize, gp.tileSize);
+        description = "[" + name + "] - \nA pair of boots.\nIncreases speed.";
         collision = true;
 
     }
