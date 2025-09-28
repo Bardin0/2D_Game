@@ -16,8 +16,8 @@ public class OBJ_SuspiciousShroom extends Entity {
         price = 2;
         name = "Suspicious Shroom";
         down1 = setup("objects/SuspiciousShroom",gp.tileSize,gp.tileSize);
-        description = "[" + name + "] - \nA suspicious fungi. \nIt looks like it \n can be consumed.\n I wonder what happens\n" +
-                " if you eat it?";
+        description = "[" + name + "] - A suspicious fungi. It looks like it can be consumed. I wonder what happens" +
+                " if you eat it? Probably nothing good. But it only costs " + price + " coins.";
         value = 3;
     }
 

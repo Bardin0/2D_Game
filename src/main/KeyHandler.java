@@ -2,8 +2,7 @@ package main;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-
-import main.Sound.SoundType;
+import java.util.HashMap;
 
 public class KeyHandler implements KeyListener {
 
@@ -11,6 +10,7 @@ public class KeyHandler implements KeyListener {
     public boolean upPressed, downPressed, leftPressed, rightPressed, enterPressed, shootKeyPressed;
     //DEBUG
     public boolean checkDrawTime = false;
+    private final HashMap<String, Long> lastPress= new HashMap<>();
 
     public KeyHandler(GamePanel gp) {
         this.gp = gp;
@@ -129,7 +129,7 @@ public class KeyHandler implements KeyListener {
             }
             // Load game
             else if (gp.ui.commandNumber == 1) {
-                //add later
+                //TODO Load game
             }
             // Quit
             else if (gp.ui.commandNumber == 2) {
@@ -276,6 +276,7 @@ public class KeyHandler implements KeyListener {
                 gp.gameState = gp.playState;
                 gp.config.saveConfig();
                 break;
+
             case KeyEvent.VK_ENTER:
                 enterPressed = true;
                 break;
@@ -318,7 +319,7 @@ public class KeyHandler implements KeyListener {
                 // Check if we are in the options main screen
                 if (gp.ui.subState == UI.OPTIONS_MAIN) {
                     // Check if the music volume can be increased
-                    if (gp.ui.commandNumber == 1 && gp.music.volumeScale < 5) {
+                    if (gp.ui.commandNumber == gp.ui.COMMAND_MUSIC && gp.music.volumeScale < 5) {
                         gp.music.volumeScale++;
                         gp.music.setVolume();
                         gp.playSE(Sound.SoundType.CURSOR);
@@ -334,6 +335,11 @@ public class KeyHandler implements KeyListener {
 
     }
 
+    /**
+     * Handles key inputs in the game over state
+     *
+     * @param code The key pressed
+     */
     public void gameOverState(int code) {
 
         if (code == KeyEvent.VK_W) {
@@ -364,6 +370,11 @@ public class KeyHandler implements KeyListener {
 
     }
 
+    /**
+     * Handles key inputs in the trade state
+     *
+     * @param code The key pressed
+     */
     public void tradeState(int code) {
 
         if (code == KeyEvent.VK_ESCAPE) {
@@ -376,78 +387,94 @@ public class KeyHandler implements KeyListener {
         if (gp.ui.subState == UI.TRADE_SELECT) {
 
             if (code == KeyEvent.VK_D) {
-                gp.ui.commandNumber++;
-                gp.playSE(Sound.SoundType.CURSOR);
-                if (gp.ui.commandNumber > 2) {
-                    gp.ui.commandNumber = 0;
+                if (lastPress.get("D") == null || System.currentTimeMillis() - lastPress.get("D") > 50) {
+                    gp.ui.commandNumber++;
+                    gp.playSE(Sound.SoundType.CURSOR);
+                    if (gp.ui.commandNumber > 2) {
+                        gp.ui.commandNumber = 0;
+                    }
+                    lastPress.put("D", System.currentTimeMillis());
                 }
             }
             else if (code == KeyEvent.VK_A) {
-                gp.ui.commandNumber--;
-                gp.playSE(Sound.SoundType.CURSOR);
-                if (gp.ui.commandNumber < 0) {
-                    gp.ui.commandNumber = 2;
-                }
-            }
-            else if (code == KeyEvent.VK_W) {
-                if (gp.ui.slotRow != 0) {
-                    gp.ui.slotRow--;
+                if (lastPress.get("A") == null || System.currentTimeMillis() - lastPress.get("D") > 50) {
+                    gp.ui.commandNumber--;
                     gp.playSE(Sound.SoundType.CURSOR);
-                }
-
-            }
-            else if (code == KeyEvent.VK_S) {
-                if (gp.ui.slotRow != 3) {
-                    gp.ui.slotRow++;
-                    gp.playSE(Sound.SoundType.CURSOR);
+                    if (gp.ui.commandNumber < 0) {
+                        gp.ui.commandNumber = 2;
+                    }
+                    lastPress.put("A", System.currentTimeMillis());
                 }
             }
         }
         else if (gp.ui.subState == UI.TRADE_BUY) {
 
-            if (code == KeyEvent.VK_I){
-                gp.ui.inspecting = !gp.ui.inspecting;
-                gp.playSE(Sound.SoundType.CURSOR);
+            if (code == KeyEvent.VK_ESCAPE) {
+                gp.ui.subState = UI.TRADE_SELECT;
+                gp.ui.commandNumber = 0;
+                enterPressed = false;
             }
 
+            if (code == KeyEvent.VK_I){
+                if (lastPress.get("I") == null || System.currentTimeMillis() - lastPress.get("I") > 50) {
+                    gp.ui.inspecting = !gp.ui.inspecting;
+                    gp.playSE(Sound.SoundType.CURSOR);
+                    lastPress.put("I", System.currentTimeMillis());
+                }
+            }
+
+            // W - Up
             if (code == KeyEvent.VK_W) {
-                gp.ui.slotRow--;
-                gp.playSE(Sound.SoundType.CURSOR);
-                if (gp.ui.slotRow < 0) {
-                    gp.ui.slotRow = 1;
+                if (lastPress.get("W") == null || System.currentTimeMillis() - lastPress.get("W") > 50) {
+                    if (gp.ui.slotRow > 0) {
+                        gp.ui.slotRow--;
+                        gp.playSE(Sound.SoundType.CURSOR);
+                    }
+                    lastPress.put("W", System.currentTimeMillis());
                 }
             }
+            // A - Left
             else if (code == KeyEvent.VK_A) {
-                gp.ui.slotCol--;
-                gp.playSE(Sound.SoundType.CURSOR);
-                if (gp.ui.slotCol < 0) {
-                    gp.ui.slotCol = 7;
+                if (lastPress.get("A") == null || System.currentTimeMillis() - lastPress.get("A") > 50) {
+                    if (gp.ui.slotCol > 0) {
+                        gp.ui.slotCol--;
+                        gp.playSE(Sound.SoundType.CURSOR);
+                    }
+                    lastPress.put("A", System.currentTimeMillis());
                 }
             }
+            // S - Down
             else if (code == KeyEvent.VK_S) {
-                gp.ui.slotRow++;
-                gp.playSE(Sound.SoundType.CURSOR);
-                if (gp.ui.slotRow > 1) {
-                    gp.ui.slotRow = 0;
+                if (lastPress.get("S") == null || System.currentTimeMillis() - lastPress.get("S") > 50) {
+                    if (gp.ui.slotRow < 1) { // max row is 1
+                        gp.ui.slotRow++;
+                        gp.playSE(Sound.SoundType.CURSOR);
+                    }
+                    lastPress.put("S", System.currentTimeMillis());
                 }
             }
+            // D - Right
             else if (code == KeyEvent.VK_D) {
-                gp.ui.slotCol++;
-                gp.playSE(Sound.SoundType.CURSOR);
-                if (gp.ui.slotCol > 7) {
-                    gp.ui.slotCol = 0;
+                if (lastPress.get("D") == null || System.currentTimeMillis() - lastPress.get("D") > 50) {
+                    if (gp.ui.slotCol + 1 > 7) {
+                        gp.ui.slotCol = 0; // max col is 7
+                        if(gp.ui.slotRow < 1){
+                            gp.ui.slotRow++;
+                        }else{
+                            gp.ui.slotRow = 0;
+                        }
+                    }else{
+                        gp.ui.slotCol++;
+                    }
+                    gp.playSE(Sound.SoundType.CURSOR);
+                    lastPress.put("D", System.currentTimeMillis());
                 }
 
             }
 
         }
         else if (gp.ui.subState == UI.TRADE_SELL) {
-
+            // TODO implement selling
         }
     }
 }
-
-
-
-
-

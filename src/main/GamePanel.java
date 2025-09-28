@@ -72,6 +72,10 @@ public class GamePanel extends JPanel implements Runnable{
     public final int transitionState = 7;
     public final int tradeState = 8;
 
+    private BufferedImage cachedFrame;
+    public boolean needsRedraw = true;
+
+
     // Color
     public final Color shrooms = new Color(84, 213, 98, 100);
 
@@ -199,7 +203,7 @@ public class GamePanel extends JPanel implements Runnable{
      */
     public void update(){
 
-        if (gameState == playState){
+        if (gameState == playState || gameState == transitionState || gameState == menuState) {
 
             player.update();
 
@@ -251,7 +255,7 @@ public class GamePanel extends JPanel implements Runnable{
                     interactiveTiles[currentMap][i].update();
                 }
             }
-
+            needsRedraw = true;
         }
     }
 
@@ -259,101 +263,22 @@ public class GamePanel extends JPanel implements Runnable{
      * Draws everything to a temporary screen before it is drawn to the actual screen
      * This is done to prevent flickering
      */
-    public void drawTempScreen(){
-
-        //Debug
-        long drawStart = 0;
-        if (keyHandler.checkDrawTime){
-            //Debug
-            drawStart = System.nanoTime();
-        }
+    public void drawTempScreen() {
 
         // Title Screen
-        if (gameState == titleState){
+        if (gameState == titleState) {
             ui.draw(g2);
-        }else{
-
-            //Tile
-            tileM.draw(g2);
-
-            // Interactive Tile
-            for (Entity e : interactiveTiles[currentMap]){
-                if (e != null){
-                    entityList.add(e);
-                }
+        } else if (gameState == tradeState || gameState == optionsState || gameState == pauseState || gameState == dialogueState || gameState == gameOverState) {
+            if (cachedFrame != null) {
+                g2.drawImage(cachedFrame, 0, 0, null);
             }
-
-            // Add all entities to list
-            entityList.add(player);
-
-            // Adds Npc's
-            for (Entity entity : npc[currentMap]){
-                if (entity != null){
-                    entityList.add(entity);
-                }
+            ui.draw(g2); // draw only lightweight UI elements on top
+        } else {
+            if (needsRedraw) {
+                redrawScene();
             }
-
-            // Adds objects
-            for (Entity entity : obj[currentMap]){
-                if (entity != null){
-                    entityList.add(entity);
-                }
-            }
-
-            // Adds Monsters
-            for (Entity entity: monster[currentMap]){
-                if (entity != null){
-                    entityList.add(entity);
-                }
-            }
-
-            // Adds Monsters
-            for (Entity entity: projectileList){
-                if (entity != null){
-                    entityList.add(entity);
-                }
-            }
-
-            for (Entity particle : particles) {
-                if (particle != null) {
-                    entityList.add(particle);
-                }
-            }
-
-            // Sort entity list
-            Collections.sort(entityList, new Comparator<Entity>() {
-                @Override
-                public int compare(Entity e1, Entity e2) {
-                    return Integer.compare(e1.worldY, e2.worldY);
-                }
-            });
-
-            // Draw entities
-            for (Entity entity : entityList){
-                entity.draw(g2);
-            }
-
-            // Clear list
-            entityList.clear();
-
-            // UI
-            ui.draw(g2);
-
-            if (player.onShrooms){
-                g2.setColor(shrooms);
-                g2.fillRect(0,0,fullScreenWidth,fullScreenHeight);
-            }
-
-            // Debug
-            if (keyHandler.checkDrawTime) {
-                long drawEnd = System.nanoTime();
-                long passed = drawEnd - drawStart;
-                g2.setColor(Color.white);
-                g2.drawString("Draw Time: " + passed, 10, 400);
-                System.out.println("Draw Time: " + passed);
-            }
+            g2.drawImage(cachedFrame, 0, 0, null);
         }
-
     }
 
     /**
@@ -392,6 +317,99 @@ public class GamePanel extends JPanel implements Runnable{
     public void playSE(Sound.SoundType soundType){
         SE.setFile(soundType);
         SE.play();
+    }
+
+    public void redrawScene() {
+        cachedFrame = new BufferedImage(fullScreenWidth, fullScreenHeight, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2Cache = cachedFrame.createGraphics();
+
+        long drawStart = 0;
+        if (keyHandler.checkDrawTime){
+            //Debug
+            drawStart = System.nanoTime();
+        }
+
+        //Tile
+        tileM.draw(g2Cache);
+
+        // Interactive Tile
+        for (Entity e : interactiveTiles[currentMap]){
+            if (e != null){
+                entityList.add(e);
+            }
+        }
+
+        // Add all entities to list
+        entityList.add(player);
+
+        // Adds Npc's
+        for (Entity entity : npc[currentMap]){
+            if (entity != null){
+                entityList.add(entity);
+            }
+        }
+
+        // Adds objects
+        for (Entity entity : obj[currentMap]){
+            if (entity != null){
+                entityList.add(entity);
+            }
+        }
+
+        // Adds Monsters
+        for (Entity entity: monster[currentMap]){
+            if (entity != null){
+                entityList.add(entity);
+            }
+        }
+
+        // Adds Monsters
+        for (Entity entity: projectileList){
+            if (entity != null){
+                entityList.add(entity);
+            }
+        }
+
+        for (Entity particle : particles) {
+            if (particle != null) {
+                entityList.add(particle);
+            }
+        }
+
+        // Sort entity list
+        entityList.sort(new Comparator<Entity>() {
+            @Override
+            public int compare(Entity e1, Entity e2) {
+                return Integer.compare(e1.worldY, e2.worldY);
+            }
+        });
+
+        // Draw entities
+        for (Entity entity : entityList){
+            entity.draw(g2Cache);
+        }
+
+        // Clear list
+        entityList.clear();
+
+        // UI
+        ui.draw(g2Cache);
+
+        if (player.onShrooms){
+            g2Cache.setColor(shrooms);
+            g2Cache.fillRect(0,0,fullScreenWidth,fullScreenHeight);
+        }
+
+        // Debug
+        if (keyHandler.checkDrawTime) {
+            long drawEnd = System.nanoTime();
+            long passed = drawEnd - drawStart;
+            g2Cache.setColor(Color.white);
+            g2Cache.drawString("Draw Time: " + passed, 10, 400);
+        }
+
+        g2Cache.dispose();
+        needsRedraw = false;
     }
 
 

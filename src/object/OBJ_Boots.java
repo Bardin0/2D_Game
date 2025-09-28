@@ -9,9 +9,9 @@ public class OBJ_Boots extends Entity {
 
         super(gp);
         name = "Swift Boots";
-        price = 3;
+        price = 50;
         down1 = setup("objects/boots", gp.tileSize, gp.tileSize);
-        description = "[" + name + "] - \nA pair of boots.\nIncreases speed.";
+        description = "[" + name + "] - A pair of boots. Increases speed.";
         collision = true;
 
     }

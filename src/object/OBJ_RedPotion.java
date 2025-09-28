@@ -15,8 +15,9 @@ public class OBJ_RedPotion extends Entity {
         type = typeConsumable;
         name = "Red Potion";
         down1 = setup("objects/potion_red",gp.tileSize,gp.tileSize);
-        description = "[" + name + "] - Magic potion \ncrafted in tromal. \nHeals for " + value+ " HP.";
         value = 5;
+        price = 5;
+        description = "[" + name + "] - Magic potion crafted in tromal. Heals for " + value+ " HP.";
     }
 
     public void use(Entity entity){
