@@ -54,7 +54,6 @@ public class UI {
     public static final int TRADE_SELL = 2;
 
     public boolean inspecting = false;
-    public Entity inspectedItem = null;
 
     public int slotCol = 0;
     public int slotRow = 0;
@@ -231,44 +230,6 @@ public class UI {
     }
 
     /**
-     * Draws the primary dialogue box
-     */
-    public void drawSubWindow(int x, int y, int width, int height) {
-
-        Color c = new Color(0, 0, 0, 210);
-        g2.setColor(c);
-        g2.fillRoundRect(x, y, width, height, 35, 35);
-
-        c = new Color(255, 255, 255);
-        g2.setColor(c);
-        g2.setStroke(new BasicStroke(5));
-        g2.drawRoundRect(x + 5, y + 5, width - 10, height - 10, 25, 25);
-    }
-
-    /**
-     * Gets the X coordinates for text that will be centered
-     *
-     * @param text The text to be displayed
-     * @return The X coordinate for the text
-     */
-    public int getXForCenterText(String text) {
-        int length = (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth();
-        return gp.screenWidth / 2 - length / 2;
-    }
-
-    /**
-     * Calculates the X values of text that will be aligned to the right
-     *
-     * @param text  The text to be displayed on screen
-     * @param tailX end of the dialogue box
-     * @return The X coordinate where the text will be displayed
-     */
-    public int getXForAlignToRightText(String text, int tailX) {
-        int length = (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth();
-        return tailX - length;
-    }
-
-    /**
      * Draws the players health bar, in the top left of the screen
      */
     public void drawPlayerLife() {
@@ -372,7 +333,6 @@ public class UI {
 
         // Level
         value = String.valueOf(gp.player.level);
-        System.out.println(gp.player.level);
         textX = getXForAlignToRightText(value, tailX);
         g2.drawString(value, textX, textY);
         textY += lineHeight;
@@ -674,25 +634,25 @@ public class UI {
 
         // Full screen check box
         textX = frameX + (int) (gp.tileSize * 4.5);
-        textY = frameY + gp.tileSize * 2 + (int) (gp.tileSize / 2);
+        textY = frameY + gp.tileSize * 2 + gp.tileSize / 2;
         g2.setStroke(new BasicStroke(3));
-        g2.drawRect(textX, textY, (int) (gp.tileSize / 2), (int) (gp.tileSize / 2));
+        g2.drawRect(textX, textY, gp.tileSize / 2, gp.tileSize / 2);
         if (gp.fullScreenOn) {
-            g2.fillRect(textX, textY, (int) (gp.tileSize / 2), (int) (gp.tileSize / 2));
+            g2.fillRect(textX, textY, gp.tileSize / 2, gp.tileSize / 2);
         }
 
         // Music Volume
         textY += gp.tileSize;
-        g2.drawRect(textX, textY, (int) (gp.tileSize * 2.5), (int) (gp.tileSize / 2)); // 124/24
+        g2.drawRect(textX, textY, (int) (gp.tileSize * 2.5),gp.tileSize / 2); // 124/24
         int volumeWidth = (int) ((gp.tileSize * 2.5) / 5) * gp.music.volumeScale;
-        g2.fillRect(textX, textY, volumeWidth, (int) (gp.tileSize / 2));
+        g2.fillRect(textX, textY, volumeWidth, gp.tileSize / 2);
 
 
         // SE Volume
         textY += gp.tileSize;
-        g2.drawRect(textX, textY, (int) (gp.tileSize * 2.5), (int) (gp.tileSize / 2)); // 124/24
+        g2.drawRect(textX, textY, (int) (gp.tileSize * 2.5), gp.tileSize / 2); // 124/24
         int seWidth = (int) ((gp.tileSize * 2.5) / 5) * gp.SE.volumeScale;
-        g2.fillRect(textX, textY, seWidth, (int) (gp.tileSize / 2));
+        g2.fillRect(textX, textY, seWidth, gp.tileSize / 2);
     }
 
     /**
@@ -825,6 +785,9 @@ public class UI {
 
     }
 
+    /**
+     * Draws the game over screen
+     */
     public void drawGameOverScreen() {
 
         g2.setColor(new Color(0, 0, 0, 150));
@@ -870,6 +833,9 @@ public class UI {
 
     }
 
+    /**
+     * Draws the transition screen when moving between maps
+     */
     public void drawTransition() {
 
         fadeinCounter++;
@@ -887,6 +853,9 @@ public class UI {
         }
     }
 
+    /**
+     * Draws the trade screen when interacting with an NPC
+     */
     public void drawTradeScreen() {
 
         switch (subState) {
@@ -903,6 +872,10 @@ public class UI {
         gp.keyHandler.enterPressed = false;
     }
 
+    /**
+     * Draws the initial trade screen where the player can select
+     * to buy, sell, or leave
+     */
     public void tradeSelect() {
 
         long drawStart = 0;
@@ -962,6 +935,9 @@ public class UI {
         }
     }
 
+    /**
+     * Draws the buy screen where the player can buy items from the NPC
+     */
     public void tradeBuy() {
 
         long drawStart = 0;
@@ -994,7 +970,6 @@ public class UI {
             // Draw Item Description
             String description = gp.ui.npc.inventory.get(itemIndex).description;
             int padding = textX - boundaries.get("left");
-            System.out.println(padding);
 
             description = wrapTextToWidth(g2, description, boundaries.get("right") - textX - padding);
             for (String line : description.split("\n")) {
@@ -1085,6 +1060,9 @@ public class UI {
         }
     }
 
+    /**
+     * Draws the sell screen where the player can sell items to the NPC
+     */
     public void tradeSell() {
 
     }
@@ -1103,17 +1081,6 @@ public class UI {
         boundaries.put("right", x + width - 5);
 
         return boundaries;
-    }
-
-    /**
-     * Calculates the pixel length of a string when drawn with the current font
-     * @param g2 - the Graphics2D object
-     * @param text - the text to be measured
-     * @return The pixel length of the string
-     */
-    public int getStringLength(Graphics2D g2, String text) {
-        FontMetrics fm = g2.getFontMetrics();
-        return fm.stringWidth(text);
     }
 
     /**
@@ -1141,7 +1108,7 @@ public class UI {
 
                 if (testWidth > maxWidth) {
                     // Commit current line and start new one
-                    result.append(line.toString()).append("\n");
+                    result.append(line).append("\n");
                     line = new StringBuilder(word);
                 } else {
                     line = new StringBuilder(testLine);
@@ -1150,7 +1117,7 @@ public class UI {
 
             // Flush remaining words in paragraph
             if (!line.isEmpty()) {
-                result.append(line.toString());
+                result.append(line);
             }
 
             // Add a paragraph break unless it's the last one
@@ -1162,8 +1129,41 @@ public class UI {
         return result.toString();
     }
 
+    /**
+     * Draws the primary dialogue box
+     */
+    public void drawSubWindow(int x, int y, int width, int height) {
 
+        Color c = new Color(0, 0, 0, 210);
+        g2.setColor(c);
+        g2.fillRoundRect(x, y, width, height, 35, 35);
 
+        c = new Color(255, 255, 255);
+        g2.setColor(c);
+        g2.setStroke(new BasicStroke(5));
+        g2.drawRoundRect(x + 5, y + 5, width - 10, height - 10, 25, 25);
+    }
 
+    /**
+     * Gets the X coordinates for text that will be centered
+     *
+     * @param text The text to be displayed
+     * @return The X coordinate for the text
+     */
+    public int getXForCenterText(String text) {
+        int length = (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth();
+        return gp.screenWidth / 2 - length / 2;
+    }
 
+    /**
+     * Calculates the X values of text that will be aligned to the right
+     *
+     * @param text  The text to be displayed on screen
+     * @param tailX end of the dialogue box
+     * @return The X coordinate where the text will be displayed
+     */
+    public int getXForAlignToRightText(String text, int tailX) {
+        int length = (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth();
+        return tailX - length;
+    }
 }
