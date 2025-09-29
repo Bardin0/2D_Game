@@ -218,15 +218,20 @@ public class UI {
         drawSubWindow(x, y, width, height);
 
         g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 28F));
-        x += gp.tileSize;
-        y += gp.tileSize;
+        int textX = x + gp.tileSize;
+        int textY = y + gp.tileSize;
 
-        for (String line : currentDialogue.split("\n")) {
-            g2.drawString(line, x, y);
-            y += 40;
+        // Why is this not a method?
+        String text = currentDialogue;
+        HashMap<String, Integer> boundaries;
+        boundaries = getSubWindowBoundaries(x, y, height, width);
+        int padding = x - boundaries.get("left");;
+
+        text = wrapTextToWidth(g2, currentDialogue, boundaries.get("right") - textX - padding);
+        for (String line : text.split("\n")) {
+            g2.drawString(line, textX, textY);
+            textY += 40;
         }
-
-
     }
 
     /**
@@ -1075,10 +1080,10 @@ public class UI {
      */
     public HashMap<String, Integer> getSubWindowBoundaries(int x, int y, int length, int width) {
         HashMap<String, Integer> boundaries = new HashMap<>();
-        boundaries.put("left", x + 5);
-        boundaries.put("top", y + 5);
-        boundaries.put("bottom", y + length - 5);
-        boundaries.put("right", x + width - 5);
+        boundaries.put("left", x + 10);
+        boundaries.put("top", y + 10);
+        boundaries.put("bottom", y + length - 10);
+        boundaries.put("right", x + width - 10);
 
         return boundaries;
     }

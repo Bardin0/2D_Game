@@ -11,6 +11,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.logging.Logger;
 
 public class GamePanel extends JPanel implements Runnable{
 
@@ -75,12 +76,13 @@ public class GamePanel extends JPanel implements Runnable{
     private BufferedImage cachedFrame;
     public boolean needsRedraw = true;
 
-
     // Color
     public final Color shrooms = new Color(84, 213, 98, 100);
 
     // Options
     public boolean fullScreenOn = false;
+
+    public final Logger LOGGER = Logger.getLogger(GamePanel.class.getName());
 
 
     public GamePanel(){
